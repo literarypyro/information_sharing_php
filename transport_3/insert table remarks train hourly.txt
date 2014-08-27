@@ -1,0 +1,8 @@
+
+CREATE TABLE  `train_hourly_remarks` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `hourly_date` datetime NOT NULL,
+  `hour` varchar(45) NOT NULL,
+  `remarks` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
