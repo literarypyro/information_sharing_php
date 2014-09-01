@@ -1,11 +1,6 @@
-<!--
-Program: CCDR
--->
-
 <?php
 session_start();
 ?>
-
 <?php
     require('db_page.php');
 	if($_SESSION['page']=="submit.php"){
@@ -47,3 +42,6 @@ session_start();
 		
 	
 ?>
+<!--
+Program: CCDR
+-->

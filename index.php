@@ -1,12 +1,11 @@
+<?php
+session_start();
+?>
 <!--Modified by Manolo Jr.
 Date: 21 July 2014
 Modify: Login screen
 Program: Transport CCDR
 -->
-
-<?php
-session_start();
-?>
 <?php
 //session_destroy();
 ?>
