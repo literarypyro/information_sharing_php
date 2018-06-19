@@ -1,21 +1,25 @@
 <?php
-$db=new mysqli("localhost","root","","station");
-
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 ?>
 
 <?php
 require("monitoring menu.php"); 
 ?>
 <link href="layout/landbank/logbook style.css" rel="stylesheet" type="text/css"  id='stylesheet' />
-<br>
-<br>
 
-<form action='ticket_seller_report.php' method=post>
-<table style='border: 1px solid gray' class='logbookTable'>
-<tr>
-<th>Ticket Seller</th>
-<td>
 
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+<div class="PgTitle">
+Ticket Seller Report
+</div>
+
+<form action='ticket_seller_report.php' method="post">
+<ul class="SearchBar">
+	<li>
 <select name='ticket_seller'>
 <?php
 
@@ -32,19 +36,9 @@ for($i=0;$i<$nm;$i++){
 
 
 ?>
-
 </select>
-</td>
-</tr>
-
-
-<tr><th colspan=2>Date Range</th></tr>
-<tr>
-<th>From</th>
-
-<td>
-
-
+</li>
+<li>|
 <select name='from_month'>
 <?php
 $mm=date("m");
@@ -73,6 +67,8 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+</li>
+<li>
 <select name='from_day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -93,6 +89,8 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+</li>
+<li>
 <select name='from_year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -113,13 +111,7 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select>
-<td>
-
-</tr>
-
-<tr>
-<th>To</th>
-<td>
+</li><li>-
 <select name='to_month'>
 <?php
 $mm=date("m");
@@ -148,6 +140,7 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+</li><li>
 <select name='to_day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -168,6 +161,7 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+</li><li>
 <select name='to_year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -187,20 +181,15 @@ for($i=1999;$i<=$dateRecent;$i++){
 <?php
 }
 ?>
-</select>
-</td>
-</tr>
-<tr>
-<th colspan=2><input type='submit' value='Submit' /></th>
-</tr>
-</table>
+</select>|
+</li><li><input type='submit' value='Submit' /></li>
+</ul>
 </form>
-<br>
-<br>
+<hr class="PgLine"/>
 <?php if(isset($_POST['ticket_seller'])){
 ?>
 
-<table border=1 style='border-collapse:collapse;' width=100% class='logbookTable'>
+<table class="BigTableCLC">
 <tr>
 <th rowspan=2>Name of Ticket Seller</th>
 <th rowspan=2>Date</th>
@@ -214,6 +203,23 @@ for($i=1999;$i<=$dateRecent;$i++){
 <th>SV Ticket</th>
 <th>Discounted SV Ticket</th>
 </tr>
+
+
+
+<!--table border=1 style='border-collapse:collapse;' width=100% class='logbookTable'>
+<tr>
+<th rowspan=2>Name of Ticket Seller</th>
+<th rowspan=2>Date</th>
+<th rowspan=2>Station</th>
+<th colspan=4>Number of Ticket Sold</th>
+<th rowspan=2>Number of Human Errors</th>
+</tr>
+<tr>
+<th>SJ Ticket</th>
+<th>Discounted SJ Ticket</th>
+<th>SV Ticket</th>
+<th>Discounted SV Ticket</th>
+</tr-->
 <?php
 
 $from_month=$_POST['from_month'];

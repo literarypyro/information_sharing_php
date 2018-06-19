@@ -2,14 +2,16 @@
 session_start();
 ?>
 <?php
+require("db.php");
+?>
+<?php
 require_once("phpexcel/Classes/PHPExcel.php");
 require_once("phpexcel/Classes/PHPExcel/IOFactory.php");
 require("excel functions.php");
 
 ?>
 <?php
-	$db=new mysqli("localhost","root","","station");
-	
+	$db=retrieveDb();	
 
 	$year=$_SESSION['year'];
 	$month=$_SESSION['month'];
@@ -90,5 +92,11 @@ require("excel functions.php");
 	}
 	
 	save($ExWb,$excel,$newFilename); 	
-	echo "DR1 Report has been generated!  Press right click and Save As: <a href='".$newFilename."'>Here</a>";	
+	$newFilename2=str_replace('xls','html',$newFilename);
+	saveHTML($ExWb,$excel,$newFilename2); 	
+
+	echo "DR8 Report has been generated!  Press right click and Save As: <a href='".$newFilename."'>Here</a>";	
+	echo "<br>";
+	echo "DR8 (HTML) Report has been generated!  Press right click and Save As: <a href='".$newFilename2."'>Here</a>";	
+
 ?>

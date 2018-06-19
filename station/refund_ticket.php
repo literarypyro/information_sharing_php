@@ -169,27 +169,32 @@ function fillEdit(element,refund_id,reference_id){
 
 }
 </script>
-<link href="layout/landbank/logbook style.css" rel="stylesheet" type="text/css"  id='stylesheet' />
 
-<table style='border:1px solid gray' width=100% class='controlslip'>
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+
+<table class="TableCLC2" align="center">
 <tr>
-<td><b>Ticket Seller:</b> <?php echo $ticket_seller_name; ?></td>
-<td><b>Date:</b> <?php echo $refund_date; ?></td>
+	<th colspan="2">Details</th>
 </tr>
 <tr>
-<td><b>ID Number:</b> <?php echo $ticket_seller_id; ?></td>
-<td><b>Time:</b> <?php echo $refund_time; ?></td>
+<td>Ticket Seller: <b><?php echo $ticket_seller_name; ?></td>
+<td>Date: <b> <?php echo $refund_date; ?></td>
 </tr>
 <tr>
-<td><b>AD Number:</b> <?php echo $ad_no; ?></td>
-<td><b>Station:</b> <?php echo $station_name; ?></td>
+<td>ID Number: <b> <?php echo $ticket_seller_id; ?></td>
+<td>Time: <b> <?php echo $refund_time; ?></td>
+</tr>
+<tr>
+<td>AD Number: <b> <?php echo $ad_no; ?></td>
+<td>Station: <b> <?php echo $station_name; ?></td>
 </tr>
 </table>
 <?php
 }
 ?>
-<br>
-<table border=1 width=100% style='border-collapse:collapse;' class='logbookTable'>
+
+<table class="BigTableCLC">
 <tr>
 <th>Reference ID</th>
 <th>Ticket Type</th>
@@ -210,13 +215,13 @@ for($i=0;$i<$nm;$i++){
 	$reference_id=$reference_stamp."_".$i;	
 ?>
 <tr>
-	<td><?php echo $reference_id; ?></td>
-	<td align=center><?php echo strtoupper($row['ticket_type']); ?> <a href='#' onclick="fillEdit('ticket_type','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
+	<td class="UnclickableCLC"><?php echo $reference_id; ?></td>
+	<td class="ClickableCLC" onclick="fillEdit('ticket_type','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo strtoupper($row['ticket_type']); ?></td>
 
 	
-	<td align=center><?php echo $row['refund_amount']; ?> <a href='#' onclick="fillEdit('refund_amount','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-	<td align=center><?php echo $row['reason']; ?> <a href='#' onclick="fillEdit('reason','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-	<td><a href='#' onclick="deleteRow('<?php echo $row['id']; ?>','refund_ticket','<?php echo $refund_id; ?>','<?php echo $station; ?>')">X</a></td>
+	<td class="ClickableCLC" onclick="fillEdit('refund_amount','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $row['refund_amount']; ?></td>
+	<td class="ClickableCLC" onclick="fillEdit('reason','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $row['reason']; ?></td>
+	<td class="DeletableCLC"><a href='#' onclick="deleteRow('<?php echo $row['id']; ?>','refund_ticket','<?php echo $refund_id; ?>','<?php echo $station; ?>')" style="text-decoration:none;">X</a></td>
 </tr>
 <?php
 }
@@ -225,17 +230,16 @@ for($i=0;$i<$nm;$i++){
 */
 ?>
 </table>
-<br>
 <div id='fillRefund' name='fillRefund'></div>
-<br>
-<br>
+
 <form action='refund_ticket.php' method='post'>
-<table style='border:1px solid gray' class='controlslip'>
+<table class="EntryTableCLC" width="30%" align="center"><tr><td>
+<table class="miniHolderCLC">
 <tr>
-<th colspan=2>Add Entry</th>
+<th class="HeaderCLC" colspan=2>Add Entry</th>
 </tr>
 <tr>
-<th>Ticket Type</th>
+<td>Ticket Type</td>
 <td>
 <select name='ticket_type'>
 	<option value='sjt'>SJT</option>
@@ -250,11 +254,11 @@ for($i=0;$i<$nm;$i++){
 <td><input type='text' name='serialno' /></td></tr>
 -->
 <tr>
-<th>Refund Amount</th>
-<td><input type='text' name='refund_amount' /></td>
+<td width="70%">Refund Amount</td>
+<td width="30%"><input type='text' name='refund_amount' placeholder="Refund Amount" /></td>
 </tr>
 <tr>
-<th>Reason for Refund</th>
+<td>Reason for Refund</td>
 <td>
 <select name='refund_reason'>
 <?php
@@ -272,13 +276,14 @@ for($i=0;$i<$nm;$i++){
 </select>
 </td>
 </tr>
+</table></td></tr>
 <?php
 if($refund_id==""){
 }
 else {
 ?>
 <tr>
-<th colspan=2>
+<td align="center" style="padding:15px 0px;">
 <input type=hidden name='refund_id' value='<?php echo $refund_id; ?>' />
 <input type=submit value='Submit' />
 </th>

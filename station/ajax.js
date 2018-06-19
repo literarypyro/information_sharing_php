@@ -34,3 +34,23 @@ function makeajax(url,testFunction){
 	xmlHttp.send();	
 
 }
+
+function eventFire(el, etype){
+  if (el.fireEvent) {
+   (el.fireEvent('on' + etype));
+  } else {
+    var evObj = document.createEvent('Events');
+    evObj.initEvent(etype, true, false);
+    el.dispatchEvent(evObj);
+  }
+}
+
+function PasaCLC(){
+	var idz = document.getElementById('AddNewEntryCLC');
+	if(idz==null){
+		alert("Click 'Get Records' first!");	
+	}
+	else{
+	eventFire(idz,'click');
+	}
+}

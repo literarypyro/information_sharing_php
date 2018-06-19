@@ -900,6 +900,7 @@ class PHPExcel_Reader_Excel5 implements PHPExcel_Reader_IReader
 	
 							// need check because some blip types are not supported by Escher reader such as EMF
 							if ($blip = $BSE->getBlip()) {
+							/**
 								$ih = imagecreatefromstring($blip->getData());
 								$drawing = new PHPExcel_Worksheet_MemoryDrawing();
 								$drawing->setImageResource($ih);
@@ -925,6 +926,7 @@ class PHPExcel_Reader_Excel5 implements PHPExcel_Reader_IReader
 		
 								$drawing->setWorksheet($this->_phpSheet);
 								$drawing->setCoordinates($spContainer->getStartCoordinates());
+								*/
 							}
 						}
 					

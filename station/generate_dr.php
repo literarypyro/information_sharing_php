@@ -2,14 +2,16 @@
 session_start();
 ?>
 <?php
+require("db.php");
+?>
+<?php
 require_once("phpexcel/Classes/PHPExcel.php");
 require_once("phpexcel/Classes/PHPExcel/IOFactory.php");
 require("excel functions.php");
 
 ?>
 <?php
-	$db=new mysqli("localhost","root","","station");
-	
+	$db=retrieveDb();	
 
 	$year=$_POST['year'];
 	$month=$_POST['month'];

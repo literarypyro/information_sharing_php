@@ -2,6 +2,9 @@
 session_start();
 ?>
 <?php
+require("db.php");
+?>
+<?php
 require_once("phpexcel/Classes/PHPExcel.php");
 require_once("phpexcel/Classes/PHPExcel/IOFactory.php");
 require("excel functions.php");
@@ -11,8 +14,7 @@ require("excel functions.php");
 <?php
 
 if(isset($_GET['ticket_seller'])){
-	$db=new mysqli("localhost","root","","station");
-
+	$db=retrieveDb();
 	$ticket_seller=$_GET['ticket_seller'];
 	$from_date=$_GET['from_date'];
 	$to_date=$_GET['to_date'];

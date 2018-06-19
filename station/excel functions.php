@@ -17,7 +17,7 @@ function loadExistingWorkbook($workBookName)
 {
 	$objReader = PHPExcel_IOFactory::createReader('Excel5');
 	// $objReader->setReadDataOnly(true);
-
+//	$objReader->setReadDataOnly(true);
 	$objPHPExcel = $objReader->load($workBookName);
 	// $objPHPExcel = PHPExcel_IOFactory::load($workBookName);
 //	$objWriter = PHPExcel_IOFactory::createWriter($excelAPI, 'Excel5');
@@ -55,6 +55,9 @@ function createWorksheet($excelAPI,$workSheetName,$action){
 
 	else if($action=="openActive"){
 		$excelAPI->setActiveSheetIndex(0);
+		
+		$excelAPI->getActiveSheet()->setShowGridlines(false);
+		
 //		$excelAPI->getActiveSheet();
 	}
 	
@@ -178,6 +181,36 @@ function styleCellArea($range,$outlined,$bold,$excelWorksheet,$excelAPI){
 function save($workbook,$excelAPI,$workbookName)
 {
 	$objWriter = PHPExcel_IOFactory::createWriter($excelAPI, 'Excel5');
+	$objWriter->save($workbookName);
+/**
+	if($workbookName==""){
+		$excelAPI->saveWorkbook($workbook);
+	}
+	else {
+		$excelAPI->saveWorkbookCopy($workbookName,$workbook);
+	}
+	*/
+}
+
+function saveHTML($workbook,$excelAPI,$workbookName)
+{
+	$objWriter = PHPExcel_IOFactory::createWriter($excelAPI, 'HTML');
+//	$objWriter->setUseInlineCSS(true);
+	$objWriter->save($workbookName);
+/**
+	if($workbookName==""){
+		$excelAPI->saveWorkbook($workbook);
+	}
+	else {
+		$excelAPI->saveWorkbookCopy($workbookName,$workbook);
+	}
+	*/
+}
+
+function savePDF($workbook,$excelAPI,$workbookName)
+{
+
+	$objWriter = PHPExcel_IOFactory::createWriter($excelAPI, 'PDF');
 	$objWriter->save($workbookName);
 /**
 	if($workbookName==""){

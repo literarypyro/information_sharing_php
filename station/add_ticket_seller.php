@@ -1,6 +1,8 @@
 <?php
-$db=new mysqli("localhost","root","","station");
-
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 if((isset($_POST['ts_id']))&&($_POST['ts_id']!=="")){
 	
 	$first_name=strtoupper($_POST['first_name']);

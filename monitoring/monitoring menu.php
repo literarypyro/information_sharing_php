@@ -1,157 +1,261 @@
 <style type='text/css'>
-ul {
-  padding: 0;
-  margin: 0;
-  list-style: none;
+
+.box h2 {
+text-align:left;
+line-height:80px;
 }
 
-ul li {
-  float: left;
-  position: relative;
-  width: auto;
-  text-align:center;
-  padding: 0.2em; 
-  min-width: 8em;
-  margin-right: 0.5em;
+.box {
+width:100%;
+height:150px;
+background:#f5f5f5;
+border: 1px solid #e3e3e3;
+border-radius: 4px;
+
+/* margin:60px 20px; 
+margin:2px 5px; */
+}
+
+.effect1 {
+-webkit-box-shadow:0 10px 6px -6px #777;
+-moz-box-shadow:0 10px 6px -6px #777;
+box-shadow:0 10px 6px -6px #777;
+}
+
+.one_heading {
+	border-bottom: 1px solid #FBCC2A; 
+
+}
+
+.exception {
+	border-bottom: 1px solid #FBCC2A; 
+}
+
+h2.except {
+	color: #444; 
+	font: 20px Verdana; 
+	-webkit-font-smoothing: antialiased; 
+	text-shadow: 0px 1px black; 
+	margin: 10px 0 2px 0; 
+	padding: 5px 0 6px 0; 
+}
+
+/*
+.exception td {
+	border:1px solid black; 
 	
-  -webkit-border-radius: 3px;
--moz-border-radius: 3px;
-border-radius: 3px;
--webkit-box-shadow: 3px 3px 3px 3px rgba(43, 43, 77, 0.5);
--moz-box-shadow: 3px 3px 3px 3px rgba(43, 43, 77, 0.5);
-box-shadow: 3px 3px 3px 3px rgba(43, 43, 77, 0.5);
+a:link { color: green; text-decoration: none }
+a:active { color: yellow; text-decoration: none }
+a:visited { color: green; text-decoration: none }
+a:hover { color: orange; text-decoration: underline; font-weight: bold}
+*/
 
+/* a.ex1:hover,a.ex1:active {color:red;} */
 
-  }
-
-  .with_tree {
-  
-background: url('images/arrow.png') no-repeat;
-  background-size:10%;
-  -moz-background-size:10%;
-  background-position:right;
-  }
-  
-  
-  ul li a {
-color: rgb(85, 85, 102); 
-  text-decoration: none;
-font-weight: bold;
-
-
-  }
-  
-  
-li ul {
-  display: none;
-  position: absolute; 
-  top: 1em;
-  left: 0;
-  margin-left:-.2em;
-  margin-top:3;
+a.ex1:link {
+     color: black;
+    -webkit-transition: 0.5s;
+     -moz-transition: 0.5s;
+     -o-transition: 0.5s;
+     -ms-transition: 0.5s;
+     transition: 0.5s;
+     font-weight: bold
 }
-  
-  
-  
-  
-li ul li {
-	text-align:left;
- padding: 0.2em; 
-  margin-top:1;
-	background-color:white;
- }
-  
-li > ul {
- top: auto;
- left: auto;
- }
-
-li:hover ul { display: block; }
-
-li ul li:hover {
-	background-color:rgb(207,207,207);
-	color:white;
-
-}
-h3 {
-color: rgb(85, 85, 102);
-
-}
-ul ul li:hover ul {
-display:inline-block;
-left:auto;
+ 
+a.ex1:hover {
+     color: #fff;
+    text-shadow: -1px 1px 5px #03c, 1px -1px 5px black;
 }
 
-ul ul li ul {
-        display:none;
-		visibility:hidden;
+h1 {color: #f5f5f5; text-shadow: black 0.1em 0.1em 0.2em; font: 55px 'Buxton Sketch'}
+
+/*
+h1 {
+	text-shadow: -1px -1px 1px #fff, 1px 1px 1px #000;
+	color: #f5f5f5;
+	opacity: 0.6;
+	font: 60px 'Museo700';
 }
-
-ul ul ul {
-	margin-left:98%;
-	top:0;
-	
-}
-
-
-ul ul li:hover > ul { display:inline-block;  visibility:visible; }
-
-
+*/			
 </style>
-<body>
-
-<h3>Information Monitoring</h3><br>
-
-<div >
-<ul class='nav'>
-<li>
-<a style='text-decoration:none;' href='#'>Station</a>
-	<ul>
-<!--	<li><a style='text-decoration:none;' href='station/equipment incident.php'>Equipment/Facility Incident</a></li>
-		<li><a style='text-decoration:none;' href='station/passenger incident.php'>Passenger Incident/Complaint</a></li>
-		<li><a style='text-decoration:none;' href='station/sales report.php'>Actual Sales and Refund Report</a></li>
-		<li><a style='text-decoration:none;' href='station/authorization slip.php'>Authorization Slip Report</a></li>  
-
--->
-		<li><a style='text-decoration:none;' href='#'>Equipment/Facility Incident</a></li>
-		<li><a style='text-decoration:none;' href='#'>Passenger Incident/Complaint</a></li>
-		<li><a style='text-decoration:none;' href='#'>Actual Sales and Refund Report</a></li>
-		<li><a style='text-decoration:none;' href='#'>Authorization Slip Report</a></li>  
+<style type='text/css'>
 
 
-	</ul>
-</li>
-<li>
-<?php
-	$browser=$_SERVER['HTTP_USER_AGENT'];
+/*--- Menu --- */
+
+ul#navMenu {
+left: 200px;
+padding:0px; 
+/* width:1020px; */
+width:100%;
+list-style:none;
+position:relative
+}
+
+ul#navMenu ul {
+position:absolute;
+left:0; 
+top:100%;
+display:none;
+padding:0px;
+margin:0px
+}
+
+ul#navMenu li {
+display:inline;
+float:left;
+position:relative
+}
+
+ul#navMenu a {
+text-decoration:none;
+padding:10px 0px; 
+width:200px;
+background:#f5f5f5;
+color:black;
+border:1px solid #FBCC2A;
+float:left;
+text-align:center;
+font-family: Verdana, sans-serif;
+border-radius: 4px
+}
+
+ul#navMenu a:hover {
+background:#cccccc;
+color:#333333
+}
+
+ul#navMenu li:hover ul {
+display:block;
+}
+
+*/
+/* -- width box match navmenu a */
+
+ul#navMenu ul a {
+width:200px;
+}
+
+ul#navMenu ul li {
+display:block;
+margin:0px
+}
+
+ul#navMenu ul ul {
+top:0;left:100%;
+}
+
+ul#navMenu li:hover ul ul {
+display:none;
+}
+
+ul#navMenu ul li:hover ul {
+display:block;
+}
+
+
+ /* Menu end */
+ /* a.ex1:hover,a.ex1:active {color:red;} */
+/*
+a.ex2:active {
+    display: inline-block;
+    color: #03c;
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    -o-transition: 0.5s;
+    -ms-transition: 0.5s;
+    transition: 0.5s;
+}
+ 
+a.ex2:hover {
+    -webkit-transform: rotate(10deg);
+    -moz-transform: rotate(10deg);
+    -o-transform: rotate(10deg);
+    -ms-transform: rotate(10deg);
+    transform: rotate(10deg);
+}
+ */
+</style>
+
+<link href="dist/css/hover.css" rel="stylesheet" media="all">
+<link href="dist/hover-min.css" rel="stylesheet" media="all">
+
+	<ul id="navMenu" >
+	<li><a href="#" class="bubble-float-bottom">Control Center Report</a>
+  	<ul>
+		<li><a href='edit_ccdr.php'>Search CCDR</a></li>
+		<li><a href='ccdr_summary.php'>CCDR Summary</a></li>
+		<li><a href='incident summary.php'>View Daily Incident Summary</a></li>		
 		
+	</ul>
+	</li>
+		<li><a class="bubble-float-bottom" href='#'>Train</a>	
+			<ul>
+				<li><a style='text-decoration:none;' href='train_availability.php'>Train Availability</a></li>  
+				<li><a style='text-decoration:none;' href='train hourly.php'>Train Hourly Monitoring Report</a></li>
+				<li><a style='text-decoration:none;' href='onboard equipment.php'>Onboard Equipment and Accessories</a></li>
+			</ul>
+		</li>	
+		<li><a href='clearance form.php'>Clearance Form</a></li>
+		<li><a class="bubble-float-bottom" href='#' >Statistics Report</a>
+			<ul>
+				<li><a href='#' onclick="window.open('statistics_report_modified.php')">Train Equipment</a></li>
+				<li><a href='#' onclick="window.open('car_statistics_report.php')">Rolling Stock (Cars)</a></li>
+				<li><a href='#' onclick="window.open('td_history.php')">Personnel</a></li>
+				<li><a href='#' onclick="window.open('other_history.php')">Other Incidents</a></li>
+				<li><a class="bubble-float-right" href='#' >Problem Type</a>
+					<ul>			
+						<?php 
+						$db=new mysqli("localhost","root","","transport");
+						$sql="select * from equipment_type order by sequence";
+						$rs=$db->query($sql);
+						$nm=$rs->num_rows;
+					
+						for($i=0;$i<$nm;$i++){
+							$row=$rs->fetch_assoc();
+						?>
+							<li><a href='#'  onclick="window.open('problem_history.php?problem=<?php echo $row['equipment_code']; ?>')"><?php echo $row['equipment_name']; ?></a> </li>
+						<?php
+						}
+						?>
+					</ul>
+				</li>
+				<li><a class="bubble-float-right" href='#' >Stats Report(AFC)</a>
+					<ul>			
+						<?php 
+						$db=new mysqli("localhost","root","","transport");
+					
+						$sql="select * from station";
+						$rs=$db->query($sql);
+						$nm=$rs->num_rows;
+					
+						for($i=0;$i<$nm;$i++){
+							$row=$rs->fetch_assoc();
+						?>
+							<li><a href='#'  onclick="window.open('statistics_report_afc.php?station=<?php echo $row['id']; ?>&station_name=<?php echo $row['station_name']; ?>')"><?php echo $row['station_name']; ?></a> </li>
+						<?php
+						}
+						?>
+							<li><a href='#' onclick="window.open('statistics_report_afc.php?station=D&station_name=Depot')">Depot</a></li>
+					</ul>
+				</li>	
+			</ul>			
+		</li>		
 
-?>
-<a  style='text-decoration:none;' href='transport/index.php'>Transport</a>
-	<ul>
-	<li class='with_tree'><a style='text-decoration:none;' href='#'>Control Center</a>
-		<ul <?php if(preg_match('/Opera/i', $browser)){ echo "style='margin-left:21%; top:0;'; "; } ?>>
-			<li><a href='transport/ccdr_summary.php'>CCDR Summary</a></li>
-			<li><a href='transport/incident report.php'>Daily Report</a></li>
+	<!--
+	<li><a class="bubble-float-bottom" href='#'>Transport</a>	
+		<ul>
+			<li><a style='text-decoration:none;' href='indexAdd.php'>Transport Employees</a></li>  
+			<li><a style='text-decoration:none;' href='UserAdd.php'>Transport Users</a></li>	
+			<li><a style='text-decoration:none;' href='signatories_list.php'>Signatories</a></li>	
+			<li><a style='text-decoration:none;' href='details_list.php'>Preencoded Details</a></li>	
 		</ul>	
 	</li>
-	<li><a style='text-decoration:none;' href='transport/onboard equipment.php'>On-Board Equipt. & Accessories</a></li>
-	<li class='with_tree'><a  style='text-decoration:none;' href='#'>Train Report+</a>
-		<ul <?php if(preg_match('/Opera/i', $browser)){ echo "style='margin-left:21%; top:0;'; "; } ?>>
-		<li><a style='text-decoration:none;' href='transport/train_availability.php'>Train Availability</a></li>  
-		<li><a style='text-decoration:none;' href='transport/train hourly_2.php'>Train Hourly Monitoring Report</a></li>
-		</ul>
-	</li>
-	</ul>
-</li>
-<li>
-<a  style='text-decoration:none;' href='#'>Safety and Security Unit</a> 
-	<ul>
-	<li><a style='text-decoration:none;' href='#'>Theft/Pickpocket Report</a></li>
-	</ul>
-</li>
+	-->
 </ul>
 
-</div>
-
-</body>
+<style type='text/css'>
+table {
+	border-collapse:collapse;
+}
+</style>

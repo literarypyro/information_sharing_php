@@ -2,7 +2,10 @@
 session_start();
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 ?>
 <?php
 require("monitoring menu.php");
@@ -10,7 +13,7 @@ require("monitoring menu.php");
 <link href="layout/landbank/logbook style.css" rel="stylesheet" type="text/css"  id='stylesheet' />
 
 <?php
-$db=new mysqli("localhost","root","","station");
+$db=retrieveDb();
 if(isset($_POST['incident_index'])){
 	$element=$_POST['formElement'];
 
@@ -328,8 +331,14 @@ function fillEdit(element,incident_id,reference_id){
 </script>
 
 
-<br>
-<br>
+
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+<div class="PgTitle">
+Passenger Complaint
+</div>
+
+
 <form action='complaint_summary.php' method='post'>
 <?php
 $mm=date("m");
@@ -340,8 +349,8 @@ $hh=date("h");
 $min=date("i");
 $aa=date("a");
 ?>
-
-
+<ul class="SearchBar">
+	<li>
 <select name='month'>
 <?php
 for($i=1;$i<13;$i++){
@@ -361,6 +370,8 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -381,6 +392,8 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -401,11 +414,11 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select> 
-
+	</li>
+	<li>
 <select name='station'>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from station";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;
@@ -425,10 +438,9 @@ for($i=0;$i<$nm;$i++){
 ?>
 
 </select>
-<input type=submit value='Get Records' />
-</form>
-<br>
-<br>
+	</li>
+
+<hr class="PgLine"/>
 <?php
 if(isset($_SESSION['month'])){
 	
@@ -447,6 +459,24 @@ if(isset($_SESSION['month'])){
 	$row=$rs->fetch_assoc();
 	
 	$station_name=$row['station_name'];	
+	
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
+	
+	}		
+	
+	
+	
 }
 
 
@@ -467,28 +497,57 @@ if(isset($_POST['year'])){
 	$_SESSION['month']=$_POST['month'];
 	$_SESSION['day']=$_POST['day'];
 	$_SESSION['year']=$_POST['year'];	
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
 	
+	}		
 }
 
 ?>
-<table width=100% style='border:1px solid gray' id='menu'>
-<tr id='selectLogbook'>
-<td width=50%>
-Station:
-<?php
-echo $station_name;
-?>
-</td>
-<td width=50%>
-Date: 
-<?php
-echo $daily_name;
-?>
-</td>
+	<li>
+<input type=submit value='Get Records' />
+	</li>
+	
+	<?php
+	if($_SESSION['login_type']=="1"){
+	?>		
+	
+	<li style="float:right;">
+		<input type="button" value="Add New Complaint" onclick="PasaCLC()" />
+	</li>
+	
+	<?php
+	}
+	?>
+	
+</ul>
+</form>
+
+<table class="TableCLC">
+<tr>
+	<th colspan="2" class="TableHeaderCLC">Station & Date</th>
+</tr>
+<tr>
+	<td class="col1CLC">Station</td>
+	<td class="col2CLC"><?php echo $station_name; ?></td>
+</tr>
+<tr>
+	<td class="col1CLC">Date</td>
+	<td class="col2CLC"><?php echo $daily_name;	?></td>
 </tr>
 </table>
-<br>
-<table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
+
+<table class="BigTableCLC">
 <tr>
 	<th>Reference ID</th>
 	<th>Time</th>
@@ -498,8 +557,21 @@ echo $daily_name;
 	<th>Nature of Complaint</th>
 	<th>Circumstances</th>
 	<th>Findings of CCTV Footage</th>
-
 </tr>
+
+
+
+<!--table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
+<tr>
+	<th>Reference ID</th>
+	<th>Time</th>
+	<th>Complainant Identity</th>
+	<th>Person/s Involved</th>
+	<th>Concerned Office</th>
+	<th>Nature of Complaint</th>
+	<th>Circumstances</th>
+	<th>Findings of CCTV Footage</th>
+</tr-->
 <?php
 if($year==""){
 }
@@ -532,16 +604,16 @@ else {
 		
 	?>
 	<tr>
-		<td><?php echo $reference_id; ?></td>
-		<td align=center><?php echo $incident_time; ?> <a href='#' onclick="fillEdit('complaint_time','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $identity; ?> <a href='#' onclick="fillEdit('identity','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $persons; ?> <a href='#' onclick="fillEdit('person_involved','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $concerned_office; ?> <a href='#' onclick="fillEdit('concerned_office','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $nature_complaint; ?> <a href='#' onclick="fillEdit('nature_complaint','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $circumstances; ?> <a href='#' onclick="fillEdit('circumstances','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $cctv; ?> <a href='#' onclick="fillEdit('cctv_footage','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
+		<td class="UnclickableCLC"><?php echo $reference_id; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?> onclick="fillEdit('complaint_time','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $incident_time; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('identity','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')"  <?php } ?>><?php echo $identity; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('person_involved','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')"  <?php } ?>><?php echo $persons; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('concerned_office','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')"  <?php } ?>><?php echo $concerned_office; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('nature_complaint','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')"  <?php } ?>><?php echo $nature_complaint; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('circumstances','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')"  <?php } ?>><?php echo $circumstances; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('cctv_footage','<?php echo $searchRow['complaint_id']; ?>','<?php echo $reference_id; ?>')"  <?php } ?>><?php echo $cctv; ?></td>
 
-		<td><a href='#' onclick="deleteRow('<?php echo $searchRow['complaint_id']; ?>','complaint_report')" >X</a></td>
+		<td class="DeletableCLC"><a href='#' <?php if($_SESSION['login_type']=="1"){ ?>  onclick="deleteRow('<?php echo $searchRow['complaint_id']; ?>','complaint_report')" >X</a></td>
 		
 	</tr>
 <?php
@@ -550,14 +622,12 @@ else {
 ?>
 </table>
 <div id='fillIncident' name='fillIncident'></div>
-<br>
-<br>
 <?php
 if($year==""){
 }
 else {
 ?>
-<a href='#' onclick="window.open('complaint_report.php','_blank')">Add New Complaint</a>
+<a href='#' style="display:none;" id="AddNewEntryCLC" onclick="window.open('complaint_report.php','_blank')">Add New Complaint</a>
 <?php
 }
 ?>

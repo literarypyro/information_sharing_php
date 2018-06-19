@@ -2,7 +2,10 @@
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 ?>
 <?php
 if(isset($_GET['daily_id'])){
@@ -86,12 +89,17 @@ if(isset($_POST['ticket_type'])){
 	echo "</script>";
 }
 ?>
-<link href="layout/landbank/control slip.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 
 <form action='manually collected entry.php' method='post'>
-<table style='border:1px solid gray' class='controlTable'>
+<table class="EntryTableCLC" width="40%" align="center"><tr><td>
+<table class="miniHolderCLC">
 <tr>
-<th>Ticket Type</th>
+	<th class="HeaderCLC" colspan="2">Add - Manually Collected Ticket</th>
+</tr>
+<tr>
+<td>Ticket Type</td>
 <td>
 <select name='ticket_type'>
 <option value='sjt'>SJT</option>
@@ -101,22 +109,22 @@ if(isset($_POST['ticket_type'])){
 </select>
 </tr>
 <tr>
-<th>Serial Number</th>
-<td><input type='text' name='serial_no' /></td>
+<td>Serial Number</td>
+<td><input type='text' name='serial_no' placeholder="Serial Number" /></td>
 
 </tr>
 <tr>
-<th>Ticket Status</th>
-<td><input type='text' name='ticket_status' /></td>
+<td>Ticket Status</td>
+<td><input type='text' name='ticket_status' placeholder="Ticket Status" /></td>
 
 </tr>
 <tr>
-<th>Remaining Value</th>
-<td><input type='text' name='remaining_value' /></td>
+<td>Remaining Value</td>
+<td><input type='text' name='remaining_value' placeholder="Remaining Value" /></td>
 
 </tr>
 <tr>
-<th>First Use</th>
+<td>First Use</td>
 <td>
 <select name='first_month'>
 <?php
@@ -240,7 +248,7 @@ for($i=0;$i<=59;$i++){
 
 </tr>
 <tr>
-<th>Last Use</th>
+<td>Last Use</td>
 <td>
 <select name='last_month'>
 <?php
@@ -365,12 +373,12 @@ for($i=0;$i<=59;$i++){
 </tr>
 
 <tr>
-<th>EESP #</th>
-<td><input type=text name='eesp_no' /></td>
+<td>EESP #</td>
+<td><input type=text name='eesp_no' placeholder="EESP #" /></td>
 
 </tr>
 <tr>
-<th>Ticket Collected Upon</th>
+<td>Ticket Collected Upon</td>
 <td>
 <select name='collected_upon'>
 <option value='entry'>Entry</option>
@@ -379,7 +387,7 @@ for($i=0;$i<=59;$i++){
 </td>
 </tr>
 <tr>
-<th>Cash Assistant</th>
+<td>Cash Assistant</td>
 <td>
 <select name='cash_assistant'>
 <?php
@@ -399,21 +407,21 @@ for($i=0;$i<$nm;$i++){
 </td>
 </tr>
 <tr>
-<th>Remarks</th>
+<td>Remarks</td>
 <td>
-<textarea name='remarks' cols=40 rows=4></textarea>
+<textarea name='remarks' rows=4 placeholder="Remarks"></textarea>
 </td>
-</tr>
+</tr></table></td></tr>
 <?php 
 if($daily_id==""){
 }
 else {
 ?>
 <tr>
-<th colspan=2>
+<td class="EntrySubmitCLC">
 <input type=hidden name='daily_id' value="<?php echo $daily_id; ?>" />
 <input type=submit value='Submit' />
-</th>
+</td>
 </tr>
 <?php
 }

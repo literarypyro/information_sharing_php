@@ -19,17 +19,45 @@ session_start();
 					}	
 					else {
 						$row=$rs->fetch_assoc();	
-						$_SESSION['name']=$row['lastName'].", ".$row['firstName'];
+						//$_SESSION['name']=$row['lastName'].", ".$row['firstName'];
+						$_SESSION['name']=$row['firstName'];
+
 						$_SESSION['username']=$row['username'];
 						$_SESSION['department']=$row['deptCode'];
+						
+						$_SESSION['Ulevel']=$row['levelid']; 
+
+						
+						$log_stamp=date("Y-m-d H:i");
+						
+						$update="insert into log_history(username,time,action) values ('".$_SESSION['username']."','".$log_stamp."','login')";
+						$updateRS=$db->query($update);
+				
 				
 						header("Location: transport/index.php");						
 
 					}									
 				}
 				else {
-					echo "Invalid login credentials.  Please check your password or create new account.";	
-					echo '<meta http-equiv="refresh" content="3;url=index.php" />';					
+					if(($_POST['username']=="monitor")&&($_POST['password']=="123456")){
+						header("Location: monitoring/index.php");						
+						
+					}
+					else if(($_POST['username']=="engineering")&&($_POST['password']=="123456")){
+						header("Location: engineering/index.php");						
+						
+					}
+					else if(($_POST['username']=="mtt")&&($_POST['password']=="123456")){
+						header("Location: mtt/index.php");						
+						
+					}
+
+
+					else {
+						echo "Invalid login credentials. Please check your password or create new account.";	
+						echo '<meta http-equiv="refresh" content="3;url=index.php" />';					
+
+					}
 				}
 			}
 			

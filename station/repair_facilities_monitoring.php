@@ -2,10 +2,13 @@
 session_start();
 ?>
 <?php
+require("db.php");
+?>
+<?php
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
+$db=retrieveDb();
 if(isset($_POST['incident_index'])){
 	$element=$_POST['formElement'];
 
@@ -346,12 +349,14 @@ function fillEdit(element,incident_id,reference_id){
 	}	
 }	
 </script>
-
-
-
-<br>
-<br>
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+<div class="PgTitle">
+Repaired Facilities and Equipment Monitoring
+</div>
 <form action='repair_facilities_monitoring.php' method='post'>
+<ul class="SearchBar">
+	<li>
 <select name='month'>
 <?php
 for($i=1;$i<13;$i++){
@@ -371,6 +376,8 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -391,6 +398,8 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -410,11 +419,23 @@ for($i=1999;$i<=$dateRecent;$i++){
 <?php
 }
 ?>
-</select> 
+</select>
+	</li>
+	<li>
 <input type=submit value='Get Records' />
+	</li>
+	<?php
+	if($_SESSION['login_type']=="1"){
+	?>
+	<li style="float:right;">
+		<input type="button" value="Add Repair Entry" onclick="PasaCLC()" />
+	</li>
+	<?php
+	}
+	?>
+	</ul>
 </form>
-<br>
-<br>
+<hr class="PgLine"/>
 <?php
 if(isset($_SESSION['month'])){
 	$year=$_SESSION['year'];
@@ -449,17 +470,42 @@ else {
 
 	
 ?>
-<table width=100% style='border:1px solid gray' id='menu'>
-<tr id='selectLogbook'>
-<td width=50%>
-Date: 
-<?php
-echo $monitoring_name;
-?>
-</td>
+<table class="TableCLC">
+<tr>
+	<th colspan="2" class="TableHeaderCLC">Date</th>
+</tr>
+<tr>
+	<td class="col1CLC">Date</td>
+	<td class="col2CLC"><?php echo $monitoring_name; ?></td>
 </tr>
 </table>
-<br>
+
+<table class="BigTableCLC">
+<tr>
+	<th rowspan=2>Reference ID</th>
+
+	<th rowspan=2>Station</th>
+	<th rowspan=2>SS</th>
+	<th colspan=3>PROBLEMS ENCOUNTERED</th>
+	<th colspan=2>Reported to CC</th>
+	<th colspan=2>Repaired as of</th>
+	<th rowspan=2>Repair No.</th>
+	<th rowspan=2>Remarks</th>
+</tr>	
+<tr>
+	<th>Record No.</th>
+	<th>Incident No.</th>
+	<th>Details</th>
+	
+	<th>Date</th>
+	<th>Time</th>
+
+	<th>Date</th>
+	<th>Time</th>
+
+</tr>
+
+<!--
 <table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
 <tr>
 	<th rowspan=2>Reference ID</th>
@@ -484,9 +530,9 @@ echo $monitoring_name;
 	<th>Time</th>
 
 </tr>
+-->
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from repair where date like '".$monitoring_date."%%'";
 
 $rs=$db->query($sql);
@@ -569,24 +615,24 @@ if($nm>0){
 		
 ?>		
 		<tr>		
-			<td align=center><?php echo $reference_id; ?></td>
+			<td class="UnclickableCLC" align=center><?php echo $reference_id; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?> onclick="fillEdit('station','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $station; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('ss','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $ss; ?></td>
+			
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="3"){ ?>  onclick="fillEdit('e_incident_id','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $record; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="3"){ ?>  onclick="fillEdit('e_incident_id','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $incident_no; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="3"){ ?>  onclick="fillEdit('e_incident_id','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $incident_details; ?></td>
+			
+			
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="3"){ ?>  onclick="fillEdit('reported_cc','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $cc_datestamp; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="3"){ ?>  onclick="fillEdit('reported_cc','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $cc_timestamp; ?></td>
+			
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('repair_time','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $repair_datestamp; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('repair_time','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $repair_timestamp; ?></td>
 
-			<td align=center><?php echo $station; ?> <a href='#' onclick="fillEdit('station','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $ss; ?> <a href='#' onclick="fillEdit('ss','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $record; ?> <a href='#' onclick="fillEdit('e_incident_id','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $incident_no; ?> <a href='#' onclick="fillEdit('e_incident_id','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $incident_details; ?> <a href='#' onclick="fillEdit('e_incident_id','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			
-			
-			<td align=center><?php echo $cc_datestamp; ?> <a href='#' onclick="fillEdit('reported_cc','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $cc_timestamp; ?> <a href='#' onclick="fillEdit('reported_cc','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			
-			<td align=center><?php echo $repair_datestamp; ?> <a href='#' onclick="fillEdit('repair_time','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $repair_timestamp; ?> <a href='#' onclick="fillEdit('repair_time','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-
-			<td align=center><?php echo $repair_no; ?> <a href='#' onclick="fillEdit('repair_no','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $remarks; ?> <a href='#' onclick="fillEdit('remarks_repair','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a> </td>
-			<td><a href='#' onclick="deleteRow('<?php echo $row['id']; ?>','repair_equipment')">X</a></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('repair_no','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')"  <?php } ?> align=center><?php echo $repair_no; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('remarks_repair','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')"  <?php } ?> align=center><?php echo $remarks; ?></td>
+			<td class="DeletableCLC"><a href='#'  <?php if($_SESSION['login_type']=="1"){ ?> onclick="deleteRow('<?php echo $row['id']; ?>','repair_equipment')" <?php } ?>>X</a></td>
 		</tr>
 <?php		
 	}
@@ -594,9 +640,7 @@ if($nm>0){
 ?>		
 </table>
 <div id='fillIncident' name='fillIncident'></div>
-<br>
-<br>
-<a href='#' onclick="window.open('repair_facilities_entry.php?dd=<?php echo date("Y-m-d",strtotime($monitoring_date)); ?>','_blank')">Add Repair Entry</a>
+<a href='#' style="display:none;" id="AddNewEntryCLC" onclick="window.open('repair_facilities_entry.php?dd=<?php echo date("Y-m-d",strtotime($monitoring_date)); ?>','_blank')">Add Repair Entry</a>
 <?php
 }
 ?>

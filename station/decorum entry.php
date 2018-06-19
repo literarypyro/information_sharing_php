@@ -1,5 +1,8 @@
 <?php
-$db=new mysqli("localhost","root","","station");
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 ?>
 <?php
 
@@ -41,18 +44,21 @@ if(isset($_POST['name'])){
 ?>
 
 
-<link href="layout/landbank/control slip.css" rel="stylesheet" type="text/css"  id='stylesheet' />
-
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 
 <form action='decorum entry.php' method='post'>
-<table style='border:1px solid gray' width=100% class='controlTable'>
+<table class="EntryTableCLC" width="80%" align="center"><tr><td>
+<table class="miniHolderCLC">
+<tr>
+	<th class="HeaderCLC" colspan="6">Add New Entry</th>
+</tr>
 <tr>
 <td align=right>Name:</td>
 <td colspan=2>
 <select name='name'>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from ticket_seller order by last_name";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;
@@ -86,7 +92,10 @@ $itemCount=1;
 for($i=0;$i<$nm;$i++){
 	$row=$rs->fetch_assoc();
 ?>	
-	<td><input type='checkbox' name='item_<?php echo $itemCount; ?>' /><?php echo $row['item']; ?></td>
+	<td>
+	<input type='checkbox' name='item_<?php echo $itemCount; ?>' id="item_<?php echo $itemCount; ?>" />
+	<?php echo '<label for="item_'.$itemCount.'">'.$row['item'].'</label>'; ?>
+	</td>
 
 <?php
 	$itemCount++;
@@ -104,13 +113,16 @@ for($i=0;$i<$nm;$i++){
 	$row=$rs->fetch_assoc();
 	
 ?>	
-	<td><input type='checkbox' name='item_<?php echo $itemCount; ?>' /><?php echo $row['item']; ?></td>
-
+	<td>
+	<input type='checkbox' name='item_<?php echo $itemCount; ?>' id="item_<?php echo $itemCount; ?>" />
+	<?php echo '<label for="item_'.$itemCount.'">'.$row['item'].'</label>'; ?>
+	</td>
 <?php
 	$itemCount++;
 }
 ?>
 </tr>
+</table></td></tr>
 <?php
 
 
@@ -118,13 +130,11 @@ if($daily_id==""){
 }
 else {
 ?>
-
-
 <tr>
-<th colspan=6>
+<td class="EntrySubmitCLC">
 <input type=hidden name='daily_id' value='<?php echo $daily_id; ?>' />
 
-<input type=submit value='Submit' /></th>
+<input type=submit value='Submit' /></td>
 </tr>
 <?php
 }

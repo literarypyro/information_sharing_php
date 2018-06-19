@@ -26,16 +26,20 @@ if(isset($_GET['daily_id'])){
 	$daily_id=$_GET['daily_id'];
 }
 ?>
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
+
 <form action='teemr_data_entry.php' method='post'>
-<table style='border:1px solid gray;'>
+<table class="EntryTableCLC" align="center" width="50%"><tr><td>
+<table class="miniHolderCLC">
 <tr>
-<th colspan=2>Enter TEEMR Data</th>
+<th class="HeaderCLC" colspan=2>Enter TEEMR Data</th>
 </tr>
 <tr>
-<th># of TEEMR</th><td><input type=text name='teemr_no' size=50 /></td>
+<td># of TEEMR</td><td><input type=text name='teemr_no' placeholder="# of TEEMR"/></td>
 </tr>
 <tr>
-<th>Receiving CA</th>
+<td>Receiving CA</td>
 
 <td>
 <select name='receiving_ca'>
@@ -55,11 +59,12 @@ if(isset($_GET['daily_id'])){
 </select>
 </td>
 </tr>
+</table></td></tr>
 <tr>
-<th colspan=2>
+<td class="EntrySubmitCLC">
 <input type=hidden value='<?php echo $daily_id; ?>' name='daily_id' />
 <input type=submit value='Submit' />
-</th>
+</td>
 </tr>
 </table>
 </form>

@@ -1,3 +1,4 @@
+
 <form action='scs entry.php' method='post'>
 <?php
 $mm=date("m");
@@ -73,8 +74,7 @@ for($i=1999;$i<=$dateRecent;$i++){
 
 <select name='station'>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from station";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;

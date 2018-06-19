@@ -35,25 +35,33 @@ if(isset($_GET['daily_id'])){
 	$daily_id=$_GET['daily_id'];
 }
 ?>
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 <form action='dar_ss_entry.php' method='post'>
-<table style='border:1px solid gray;'>
+<table class="EntryTableCLC" align="center" width="40%" ><tr><td>
+<table class="miniHolderCLC">
 <tr>
-<th colspan=2>Station Supervisors</th>
+	<th class="HeaderCLC" colspan="2">Add - Station Supervisors</th>
 </tr>
 <tr>
-<th>Shift 1</th><td><input type=text name='s1' size=50 /></td>
+	<td class="LabelCLC">Shift 1</td>
+	<td><input type=text name='s1' placeholder="Shift 1"/></td>
 </tr>
 <tr>
-<th>Shift 2</th><td><input type=text name='s2' size=50 /></td>
+	<td class="LabelCLC">Shift 2</td>
+	<td><input type=text name='s2' placeholder="Shift 2"/></td>
 </tr>
 <tr>
-<th>Shift 3</th><td><input type=text name='s3' size=50 /></td>
+	<td class="LabelCLC">Shift 3</td>
+	<td><input type=text name='s3' placeholder="Shift 3"/></td>
 </tr>
+	<input type="hidden" value='<?php echo $daily_id; ?>' name='daily_id' />
+</table>
+</td></tr>
 <tr>
-<th colspan=2>
-<input type=hidden value='<?php echo $daily_id; ?>' name='daily_id' />
-<input type=submit value='Submit' />
-</th>
+	<td class="EntrySubmitCLC">
+	<input type="submit" value='Submit' />
+	</td>
 </tr>
 </table>
 </form>

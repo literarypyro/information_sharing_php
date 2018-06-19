@@ -2,14 +2,16 @@
 session_start();
 ?>
 <?php
+require("db.php");
+?>
+<?php
 require_once("phpexcel/Classes/PHPExcel.php");
 require_once("phpexcel/Classes/PHPExcel/IOFactory.php");
 require("excel functions.php");
 
 ?>
 <?php
-	$db=new mysqli("localhost","root","","station");
-	
+	$db=retrieveDb();	
 	
 	$year=$_SESSION['year'];
 	$month=$_SESSION['month'];
@@ -636,22 +638,12 @@ require("excel functions.php");
 		$excel->getActiveSheet()->getStyle("J".$rowCount.":J".($rowCount*1+1))->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 		$excel->getActiveSheet()->getStyle("K".$rowCount.":K".($rowCount*1+1))->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
 
-
-
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 	save($ExWb,$excel,$newFilename); 	
+	$newFilename2=str_replace('xls','html',$newFilename);
+	saveHTML($ExWb,$excel,$newFilename2); 	
+
 	echo "DR2C Report has been generated!  Press right click and Save As: <a href='".$newFilename."'>Here</a>";	
-	
+	echo "<br>";
+	echo "DR2C (HTML) Report has been generated!  Press right click and Save As: <a href='".$newFilename2."'>Here</a>";	
 	
 ?>

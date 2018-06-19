@@ -1,0 +1,98 @@
+body{
+margin:0px;
+background:#CCC;
+}
+
+input[type=text], textarea, select{
+margin:2px 1px;
+}
+input[type=text], textarea{
+outline:none;
+border:1px solid #555;
+padding:4px 3px;
+font-family:Verdana;
+font-size:12px;
+}
+
+input[type=text]:hover, textarea:hover{
+background:#DDD;
+}
+input[type=text]:focus,textarea:focus{
+background:#f6f5cd;
+border:1px solid #5c9ce4;
+box-shadow:0px 0px 3px 0px yellow;
+}
+
+.EntryTableCLC{
+border-collapse:collapse;
+margin-top:10px;
+border:2px solid #444;
+font-family:Verdana;
+text-align:left;
+background-color:#6a6a6a;
+}
+
+.miniHolderCLC{
+width:100%;
+border-collapse:collapse;
+margin:0px;
+background-color:#666;
+border:1px solid #999;
+box-shadow:0px 0px 5px 1px #555;
+}
+.miniHolderCLC td{
+vertical-align:middle;
+padding:5px 3px;
+color:#EEE;
+font-size:12px;
+font-family:Verdana;
+}
+
+.HeaderCLC{
+background-color:#A3715F;
+background:url(Untitled-2.png);
+color:#FCFCFC;
+font-weight:bold;
+font-size:12px;
+text-align:center;
+padding:8px 2px;
+}
+
+.simpleTableCLC{
+border-collapse:collapse;
+margin:0px;
+background-color:#666;
+border:1px solid #999;
+box-shadow:0px 0px 5px 1px #555;
+}
+
+.simpleTableCLC td{
+vertical-align:middle;
+padding:5px 3px;
+color:#EEE;
+font-size:12px;
+font-family:Verdana;
+}
+
+.EntrySubmitCLC{
+text-align:center;
+padding-top:15px;
+padding-bottom:10px;
+}
+.EntrySubmitCLC > input[type=submit]{
+height:30px;
+width:120px;
+}
+input[type=text], textarea{
+width:95%;
+}
+
+a{
+color:#f28ca9;
+font-family:Verdana;
+font-size:14px;
+}
+
+label{
+cursor:pointer;
+}

@@ -2,8 +2,10 @@
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 if(isset($_POST['category'])){
 	$category=$_POST['category'];
 	$station=$_POST['station'];
@@ -160,10 +162,16 @@ function getMachineNo(ajaxHTML){
 }
 
 </script>
-<link href="layout/landbank/control slip.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 
 <form action='incidents_and_defective_entry.php' method='post'>
-<table style='border:1px solid gray' class='controlTable'>
+<table class="EntryTableCLC" align="center" width="40%" ><tr><td>
+<table class="miniHolderCLC">
+<tr>
+	<th class="HeaderCLC" colspan="2">Add - Repair Entry</th>
+</tr>
+
 <tr>
 <td>Category</td>
 <td>
@@ -186,8 +194,7 @@ function getMachineNo(ajaxHTML){
 <select name='station' id='station' onchange='calculateMachineNo()'>
 <option></option>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from station";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;
@@ -236,7 +243,7 @@ for($i=0;$i<$nm;$i++){
 </tr>
 
 <tr>
-<th colspan=2>Time</th>
+<th class="HeaderCLC" colspan="2">Time</th>
 </tr>
 
 <tr>
@@ -480,43 +487,44 @@ for($i=0;$i<=59;$i++){
 </tr>
 <tr>
 <td>Details of the Report</td>
-<td><textarea rows=5 cols=50 name='details'></textarea></td>
+<td><textarea rows=5 cols=50 name='details' placeholder="Details of the Report"></textarea></td>
 </tr>
 <tr>
-<th colspan=2>Issued Numbers:</th>
+<th class="HeaderCLC" colspan="2">Issued Numbers:</th>
 </tr>
 <tr>
 <td>Record No.</td>
-<td><input type=text name='record' /></td>
+<td><input type=text name='record' placeholder="Record No."/></td>
 </tr>
 <tr>
 <td>Incident No.</td>
-<td><input type=text name='incident' /></td>
+<td><input type=text name='incident' placeholder="Incident No."/></td>
 </tr>
 <tr>
-<th colspan=2>Reported/Coordinated To:</th>
+<th class="HeaderCLC" colspan="2">Reported/Coordinated To:</th>
 </tr>
 <tr>
 <td>Office</td>
-<td><input type=text name='reported_office' /></td>
+<td><input type=text name='reported_office' placeholder="Office"/></td>
 </tr>
 <tr>
 <td>Personnel</td>
-<td><input type=text name='reported_personnel' /></td>
+<td><input type=text name='reported_personnel' placeholder="Personnel"/></td>
 </tr>
 
 <tr>
 <td>Remarks</td>
 <td>
-<textarea rows=5 cols=50 name='remarks'></textarea>
+<textarea rows=5 cols=50 name='remarks' placeholder="Remarks"></textarea>
 </td>
 </tr>
+</table>
 <?php
 if($monitoring_date==""){ }
 else {
 ?>
 <tr>
-	<td colspan=2 align=center>
+	<td class="EntrySubmitCLC" align=center>
 		<input type=submit value='Submit' />
 		<input type=hidden name='monitoring_date' value='<?php echo $monitoring_date; ?>' />
 	</td>

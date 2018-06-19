@@ -1,0 +1,28 @@
+select{
+font-family:Helvetica;
+padding:3px 5px;
+background:#FFF;
+border:1px solid #999;
+border-radius:3px;
+}
+
+input[type=button], input[type=submit]{
+outline:none;
+font:1em Arial;
+padding: 5px 8px;
+border-radius:4px;
+background:#3D3D3D;
+border:1px solid #69410d;
+color:#EDEDED;
+transition:0.05s;
+-webkit-transition:0.05s;
+-moz-transition:0.05s;
+}
+
+input:hover{
+background-color:rgba(249,192,23,1);
+color:#333;
+}
+select, input[type=button], input[type=submit]{
+cursor:pointer;
+}

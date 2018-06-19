@@ -2,7 +2,10 @@
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 if(isset($_POST['ticket_seller'])){
 	$daily_id=$_POST['daily_id'];
 	
@@ -58,7 +61,7 @@ if(isset($_POST['ticket_seller'])){
 		$dar_entry_update.=" values ('".$ticket_seller."','".$shift."','".$ad_no."','".$remitted."','".$refund."',\"".$remarks."\",'".$daily_id."','".$sked_type."')";
 		
 		$dar_entry_update_rs=$db->query($dar_entry_update);
-		
+
 		$dar_entry_id=$db->insert_id;
 		
 		
@@ -67,6 +70,7 @@ if(isset($_POST['ticket_seller'])){
 		
 		$discrepancy_entry_update="insert into discrepancy(shortage,overage,dar_id) values ('".$shortage."','".$overage."','".$dar_entry_id."')";
 		$discrepancy_entry_update_rs=$db->query($discrepancy_entry_update);
+		
 		
 	}
 	
@@ -104,13 +108,10 @@ if(isset($_POST['ticket_seller'])){
 			}
 			else {
 
-
 				$update="insert into discrepancy_ticket(dar_id,ticket_type,shortage,overage) values ";
 				$update.="('".$dar_entry_id."','".$tickets[$n]."','".$shortage."','".$overage."')";
 			
 				$updateRS=$db->query($update);				
-				
-			
 			
 			}
 		}
@@ -162,44 +163,48 @@ if(isset($_POST['ticket_seller'])){
 	
 }
 ?>
-<link href="layout/landbank/control slip.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 
 <form action='dar_entry.php' method='post'>
-<table border=1>
+<table class="EntryTableCLC" align="center" width="35%">
 <tr>
-<td>
-<table width=100% class='controlTable'>
-<tr class='header'>
-<th>Ticket Seller</th>
-<td>
-
-<select name='ticket_seller'>
-<?php
-$db=new mysqli("localhost","root","","station");
-
-$sql="select * from ticket_seller order by last_name";
-$rs=$db->query($sql);
-$nm=$rs->num_rows;
-for($i=0;$i<$nm;$i++){
-	$row=$rs->fetch_assoc();
-
-?>
-	<option value='<?php echo $row['id']; ?>'><?php echo $row['last_name'].", ".$row['first_name']; ?></option>
-
-
-
-
-<?php
-}
-
-
-?>
-
-</select>
-</td>
+	<th class="HeaderCLC">Add - Daily Accomplishment Report</th>
 </tr>
-<tr class='grid'>
-<th>Shift</th>
+<tr>
+	<td><table class="miniHolderCLC">
+	<tr>
+	<td>Ticket Seller</td>
+	<td>
+	<select name='ticket_seller'>
+	<?php
+	
+	$db=retrieveDb();
+	
+	$sql="select * from ticket_seller order by last_name";
+	$rs=$db->query($sql);
+	$nm=$rs->num_rows;
+	for($i=0;$i<$nm;$i++){
+		$row=$rs->fetch_assoc();
+	
+	?>
+		<option value='<?php echo $row['id']; ?>'><?php echo $row['last_name'].", ".$row['first_name']; ?></option>
+	
+	
+	
+	
+	<?php
+	}
+	
+	
+	?>
+	
+	</select>
+	</td>
+</tr>
+<tr>
+<td>Shift</td>
 <td>
 <select name='shift'>
 <option>1</option>
@@ -212,8 +217,8 @@ for($i=0;$i<$nm;$i++){
 </td>
 
 </tr>
-<tr class='category'>
-<th>Schedule Type</th>
+<tr>
+<td>Schedule Type</td>
 <td>
 <select name='sked_type'>
 <option value='reg'>Regular</option>
@@ -222,111 +227,107 @@ for($i=0;$i<$nm;$i++){
 </td>
 </tr>
 <tr>
-<th>A/D No.</th>
+<td>A/D No.</td>
 <td>
-<input type=text name='ad_no' size='5' />
+<input type=text name='ad_no' size='5' placeholder="A/D No." />
 </td>
 </tr>
 <tr>
-<th>Amount Remitted</th>
-<td><input type='text' name='remitted' /></td>
+<td>Amount Remitted</td>
+<td><input type='text' name='remitted' placeholder="Amount Remitted" /></td>
 </tr>
-
-</table>
-
-<br>
-<table width=100% class='controlTable' >
-<tr class='header'>
-<th colspan=4>Tickets Sold</th>
-</tr>
-<tr class='grid'>
-<th>SJT</th><td><input type=text name='sjt' size='5'></td>
-<th>SJD</th><td><input type=text name='sjd' size='5'></td>
-</tr>
-<tr class='category'>
-<th>SVT</th><td><input type=text name='svt' size='5'></td>
-<th>SVD</th><td><input type=text name='svd' size='5'></td>
-</tr>
-
-</table>
-<br>
-<table width=100% class='controlTable'>
-<tr>
-<th>Total Amt. of Refund</th><td><input type=text name='refund' /></td>
+	</table></td>
 </tr>
 <tr>
-<th>Cash Discrepancy</th>
+	<td class="HeaderCLC">Tickets Sold</td>
+</tr>
+<tr>
 <td>
-<select name='discrep'>
-<option value='shortage'>Shortage</option>
-<option value='overage'>Overage</option>
-</select>
-<input type='text' name='discrep_value' />
-</td>
-<tr>
-	<th colspan=2 class='header'>Ticket Discrepancies</th>
-</tr>
-<tr>
-<th>SJT</th>
-<td>
-	<select name='discrep_sjt'>
-		<option value='shortage'>Shortage</option>
-		<option value='overage'>Overage</option>
-	</select>
-	<input type=text name='d_sjt' />
-	
+	<table class="miniHolderCLC">
+		<tr>
+			<td colspan="2" style="width:100%;marging:0px;padding:0px;" style="background:red;">
+				<table style="width:100%;marging:0px;padding:0px;">
+					<tr>
+						<td width="10%">SJT</td>
+						<td width="40%"><input type=text name='sjt' size='5' placeholder="SJT"></td>
+						<td width="10%">SJD</td>
+						<td width="40%"><input type=text name='sjd' size='5' placeholder="SJD"></td>
+					</tr>
+					<tr>
+						<td>SVT</td><td><input type=text name='svt' size='5' placeholder="SVT"></td>
+						<td>SVD</td><td><input type=text name='svd' size='5' placeholder="SVD"></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>Total Amt. of Refund</td><td><input type=text name='refund' placeholder="Total Amount of Refund" /></td>
+		</tr>
+		<tr>
+			<td>Cash Discrepancy</td>
+			<td>
+			<select name='discrep'>
+			<option value='shortage'>Shortage</option>
+			<option value='overage'>Overage</option>
+			</select>
+			<input type='text' name='discrep_value' placeholder="Cash Discrepancy"/>
+			</td>
+		</tr>
+	</table>
 </td>
 </tr>
 <tr>
-<th>SJD</th>
-<td>
-	<select name='discrep_sjd'>
-		<option value='shortage'>Shortage</option>
-		<option value='overage'>Overage</option>
-	</select>
-
-	<input type=text name='d_sjd' />
-	
-</td>
-
-
+	<td class="HeaderCLC">Ticket Discrepancies</td>
 </tr>
 <tr>
-<th>SVT</th>
 <td>
-	<select name='discrep_svt'>
-		<option value='shortage'>Shortage</option>
-		<option value='overage'>Overage</option>
-	</select>
-	<input type=text name='d_svt' />
-
-	
-</td>
-
-
-</tr>
-<tr>
-<th>SVD</th>
-<td>
-	<select name='discrep_svd'>
-		<option value='shortage'>Shortage</option>
-		<option value='overage'>Overage</option>
-	</select>
-	<input type=text name='d_svd' />
-
-	
-</td>
-
-
-</tr>
-
-</tr>
-<tr>
-<th>Remarks</th>
-<td><textarea name='remarks' cols=40 rows=4></textarea></td>
-</tr>
-
-</table>
+	<table class="miniHolderCLC">
+		<tr>
+			<td>SJT</td>
+			<td>
+				<select name='discrep_sjt'>
+					<option value='shortage'>Shortage</option>
+					<option value='overage'>Overage</option>
+				</select>
+				<input type=text name='d_sjt' placeholder="SJT"/>
+			</td>
+		</tr>
+		<tr>
+			<td>SJD</td>
+			<td>
+				<select name='discrep_sjd'>
+					<option value='shortage'>Shortage</option>
+					<option value='overage'>Overage</option>
+				</select>
+			
+				<input type=text name='d_sjd' placeholder="SJD" />
+			</td>
+		</tr>
+		<tr>
+			<td>SVT</td>
+			<td>
+				<select name='discrep_svt'>
+					<option value='shortage'>Shortage</option>
+					<option value='overage'>Overage</option>
+				</select>
+				<input type=text name='d_svt' placeholder="SVT" />		
+			</td>
+		</tr>
+		<tr>
+			<td>SVD</td>
+			<td>
+				<select name='discrep_svd'>
+					<option value='shortage'>Shortage</option>
+					<option value='overage'>Overage</option>
+				</select>
+				<input type=text name='d_svd' placeholder="SVD" />
+			</td>
+		</tr>
+		<tr>
+			<td>Remarks</td>
+			<td><textarea name='remarks' cols=40 rows=4 placeholder="Remarks"></textarea></td>
+		</tr>
+	</table>
 <?php
 if(isset($_GET['daily_id'])){
 	$daily_id=$_GET['daily_id'];
@@ -340,16 +341,15 @@ if($daily_id==""){
 }
 else {
 ?>
-<table width=100%>
 <tr>
-<th><input type=hidden name='daily_id' value='<?php echo $daily_id; ?>' /><input type='submit' value='Submit' /></th>
+	<td colspan="2" class="EntrySubmitCLC">
+					<input type=hidden name='daily_id' value='<?php echo $daily_id; ?>' /><input type='submit' value='Submit' />
+	</td>
 </tr>
-
-</table>
-
 <?php
 }
 ?>
+
 </td>
 </tr>
 </table>

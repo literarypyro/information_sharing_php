@@ -2,12 +2,14 @@
 session_start();
 ?>
 <?php
+require("db.php");
+?>
+<?php
 require("monitoring menu.php");
 ?>
 <link href="layout/landbank/logbook style.css" rel="stylesheet" type="text/css"  id='stylesheet' />
 <?php
-$db=new mysqli("localhost","root","","station");
-if(isset($_POST['decorum_index'])){
+$db=retrieveDb();if(isset($_POST['decorum_index'])){
 	$element=$_POST['formElement'];
 	$update="update decorum_person set ".$element."='".$_POST[$element]."' where id='".$_POST['decorum_index']."'";
 
@@ -85,8 +87,11 @@ function fillEdit(element,decorum_id,reference_id){
 
 
 </script>
-<br>
-<br>
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+<div class="PgTitle">
+Decorum Daily Report
+</div>
 <form action='decorum daily.php' method='post'>
 <?php
 $mm=date("m");
@@ -99,7 +104,8 @@ $min=date("i");
 $aa=date("a");
 ?>
 
-
+<ul class="SearchBar">
+	<li>
 <select name='month'>
 <?php
 for($i=1;$i<13;$i++){
@@ -119,6 +125,8 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -139,6 +147,8 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -159,11 +169,11 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select> 
-
+	</li>
+	<li>
 <select name='station'>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from station";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;
@@ -183,8 +193,19 @@ for($i=0;$i<$nm;$i++){
 ?>
 
 </select>
+	</li>
+	<li>
 <input type=submit value='Get Records' />
+	</li>
+	<li style="float:right;">
+		<input type="button" value="Add New Entry" onclick="PasaCLC()" />
+	</li>
+	<li style="float:right;">
+		<input type="button" value="Generate DR5" onclick="window.open('generate_dr5.php')" />
+	</li>
+</ul>
 </form>
+<hr class="PgLine"/>
 <?php
 if(isset($_SESSION['month'])){
 	$year=$_SESSION['year'];
@@ -216,6 +237,23 @@ if(isset($_SESSION['month'])){
 		$daily_id=$id_row['id'];
 	}
 
+	
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
+	
+	}		
+	
+	
 
 }
 
@@ -261,29 +299,37 @@ if(isset($_POST['month'])){
 	$_SESSION['year']=$year;
 	$_SESSION['day']=$day;
 	
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
+	
+	}		
 	
 	
 }
 ?>
 
 
-<table width=100% style='border:1px solid gray' id='menu'>
-<tr id='selectLogbook'>
-<td width=50%>
-Station:
-<?php
-echo $station_name;
-?>
-</td>
-<td width=50%>
-Date: 
-<?php
-echo $daily_name;
-?>
-</td>
-</tr>
-</table>
-<br>
+	<table class="TableCLC">
+		<th colspan="2" class="TableHeaderCLC">Station & Date</th>
+	<tr>
+		<td class="col1CLC">Station</td>
+		<td class="col2CLC"><?php echo $station_name; ?></td>
+	</tr>
+	<tr>
+		<td class="col1CLC">Date</td>
+		<td class="col2CLC"><?php echo $daily_name; ?></td>
+	</tr>
+	</table>
 <?php
 $decorum_person_sql="select * from decorum_person where daily_id='".$daily_id."' order by shift";
 $decorum_person_rs=$db->query($decorum_person_sql);
@@ -299,7 +345,7 @@ for($i=0;$i<$decorum_person_nm;$i++){
 	$person["dp_".$decorum_person_row['id']]["remarks"]=$decorum_person_row['remarks'];
 	
 	for($k=1;$k<13;$k++){
-		$person["dp_".$decorum_person_row['id']]["item_".$k]="<a href='#' style='color:white;' onclick=\"tagDecorum('".$decorum_person_row['id']."','".$k."')\">MARK</a>";
+		$person["dp_".$decorum_person_row['id']]["item_".$k]="<a href='#' style='color:#2F6A9E;font-size:13px;' onclick=\"tagDecorum('".$decorum_person_row['id']."','".$k."')\">mark</a>";
 	}
 	
 	$decorum_violation_sql="select * from decorum_violation where d_person_id='".$decorum_person_row['id']."'";
@@ -308,14 +354,21 @@ for($i=0;$i<$decorum_person_nm;$i++){
 
 	for($k=0;$k<$decorum_violation_nm;$k++){
 		$decorum_violation_row=$decorum_violation_rs->fetch_assoc();
-		$person["dp_".$decorum_person_row['id']]["item_".$decorum_violation_row['item_id']]="<a href='#' onclick=\"removeViolation('".$decorum_violation_row['id']."')\">X</a>";
+		$person["dp_".$decorum_person_row['id']]["item_".$decorum_violation_row['item_id']]="<a href='#' class='XmarkCLC' onclick=\"removeViolation('".$decorum_violation_row['id']."')\">&#10004</a>";
 	}
 	
 	
 }
 
 ?>
-<table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
+<!--table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
+<tr>
+<th>Reference ID</th>
+<th>Name</th>
+<th>Position</th>
+<th>Shift</th-->
+<div id="SHCLC">
+<table class="BigTableCLC" id="SpTblCLC">
 <tr>
 <th>Reference ID</th>
 <th>Name</th>
@@ -323,15 +376,18 @@ for($i=0;$i<$decorum_person_nm;$i++){
 <th>Shift</th>
 
 <?php
-$sql="select * from decorum limit 0,6";
+function ClCSpT($a){
+	$b = explode(' ',$a);
+	return implode('<br>',$b);
+}
+$sql="select * from decorum limit 0,12";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;
 
 for($i=0;$i<$nm;$i++){
 	$row=$rs->fetch_assoc();
 ?>	
-	<th><?php echo $row['item']; ?></th>
-
+	<th><?php echo ClCSpT($row['item']); ?></th>
 <?php
 }
 ?>
@@ -358,115 +414,62 @@ for($i=0;$i<$decorum_person_nm;$i++){
 
 ?>
 	<tr>
-	<th><?php echo $reference_id; ?></th>
-	<th><?php echo $ticket_seller_name; ?> <a href='#' onclick="fillEdit('name','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></th>
-	<th><?php echo $person["dp_".$decorum_person_row['id']]['position']; ?> <a href='#' onclick="fillEdit('position','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></th>
-	<th><?php echo $person["dp_".$decorum_person_row['id']]['shift']; ?> <a href='#' onclick="fillEdit('shift','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></th>
+	<td class="UnclickableCLC"><?php echo $reference_id; ?></td>
+	<td class="ClickableCLC"  <?php if($_SESSION['login_type']=="1"){ ?> onclick="fillEdit('name','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $ticket_seller_name; ?></td>
+	<td class="ClickableCLC"  <?php if($_SESSION['login_type']=="1"){ ?> onclick="fillEdit('position','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $person["dp_".$decorum_person_row['id']]['position']; ?></td>
+	<td class="ClickableCLC"  <?php if($_SESSION['login_type']=="1"){ ?> onclick="fillEdit('shift','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $person["dp_".$decorum_person_row['id']]['shift']; ?></td>
 	<?php
-	for($m=1;$m<=6;$m++){
+	for($m=1;$m<=12;$m++){
 	?>
-		<th>
+		<td>
 		<?php echo $person["dp_".$decorum_person_row['id']]['item_'.$m]; ?>
-		</th>
+		</td>
 	<?php
 	}
 	?>
-	<th><?php echo $person["dp_".$decorum_person_row['id']]['remarks']; ?> <a href='#' onclick="fillEdit('remarks','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a>
-	</th>
-	<th>
-	<a href='#' onclick="deleteRow('<?php echo $decorum_person_row['id']; ?>','decorum')">X</a>
-	</th>
+	<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?> onclick="fillEdit('remarks','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $person["dp_".$decorum_person_row['id']]['remarks']; ?></td>
+	<td class="DeletableCLC">	<a href='#'  <?php if($_SESSION['login_type']=="1"){ ?> onclick="deleteRow('<?php echo $decorum_person_row['id']; ?>','decorum')" <?php } ?>>X</a></td>
 
 	</tr>
 <?php
 }
 ?>
 </table>
-<br>
-<br>
-<table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
-<tr>
-<th>Reference ID</th>
-<th>Name</th>
-<th>Position</th>
-<th>Shift</th>
-
-
-
-<?php
-$sql="select * from decorum limit 6,6";
-$rs=$db->query($sql);
-$nm=$rs->num_rows;
-
-for($i=0;$i<$nm;$i++){
-	$row=$rs->fetch_assoc();
-?>	
-	<th><?php echo $row['item']; ?></th>
-
-<?php
-}
-?>
-<th>Remarks</th>
-</tr>
-<?php
-$decorum_person_sql="select * from decorum_person where daily_id='".$daily_id."' order by shift";
-$decorum_person_rs=$db->query($decorum_person_sql);
-$decorum_person_nm=$decorum_person_rs->num_rows;
-
-$reference_stamp=date("Ymd");	
-for($i=0;$i<$decorum_person_nm;$i++){
-	$reference_id=$reference_stamp."_".$i;		
-
-	$decorum_person_row=$decorum_person_rs->fetch_assoc();
-?>
-	<tr>
-	<th><?php echo $reference_id; ?></th>
-	<th><?php echo $person["dp_".$decorum_person_row['id']]['name']; ?> <a href='#' onclick="fillEdit('name','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></th>
-	<th><?php echo $person["dp_".$decorum_person_row['id']]['position']; ?> <a href='#' onclick="fillEdit('position','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></th>
-	<th><?php echo $person["dp_".$decorum_person_row['id']]['shift']; ?> <a href='#' onclick="fillEdit('shift','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></th>
-	<?php
-	for($m=7;$m<=12;$m++){
-	?>
-		<th>
-		<?php echo $person["dp_".$decorum_person_row['id']]['item_'.$m]; ?>
-		</th>
-	<?php
-	}
-	?>
-	<th><?php echo $person["dp_".$decorum_person_row['id']]['remarks']; ?> <a href='#' onclick="fillEdit('remarks','<?php echo $decorum_person_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></th>
-	<th><a href='#' onclick="deleteRow('<?php echo $decorum_person_row['id']; ?>','decorum')">X</a>
-	
-	
-	</th>
-
-	</tr>
-<?php
-}
-?>
-
-
-</table>
-<br>
-<div id='fillDecorum' name='fillDecorum'>
-
-
-
 </div>
 
+<div id='fillDecorum' name='fillDecorum'></div>
 
-<br>
 <?php 
 if($daily_id==""){
 }
 else {
+	if($_SESSION['login_type']=="1"){
 ?>
-<a href='#' onclick="window.open('decorum entry.php?daily_id=<?php echo $daily_id; ?>')">Add New Entry</a>
-<br>
-<br>
-<br>
-<a href='#' onclick="window.open('generate_dr5.php')">Generate DR5</a>
+<a href='#' style="display:none;" id="AddNewEntryCLC" onclick="window.open('decorum entry.php?daily_id=<?php echo $daily_id; ?>')">Add New Entry</a>
+<!--a href='#' onclick="window.open('generate_dr5.php')">Generate DR5</a-->
 
 <?php
+	}
 }
 ?>
+<style>
+#SHCLC{
+height:300px;
+width:98%;
+overflow:scroll;
+padding:13px 0px;
+margin:auto;
+background:#d2d4ce;
+border:1px solid #999;
+box-shadow:0px 0px 5px 0px #AAA;
+}
+#SpTblCLC{
+margin:0px 10px;
+width:150%;
+}
 
+#SpTblCLC td:nth-child(1n+4){
+text-align:center;
+}
+
+</style>

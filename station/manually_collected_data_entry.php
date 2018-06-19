@@ -1,5 +1,8 @@
 <?php
-$db=new mysqli("localhost","root","","station");
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 if(isset($_POST['manually_id'])){
 
 	$manually_id=$_POST['manually_id'];
@@ -26,16 +29,19 @@ if(isset($_GET['manually_id'])){
 	$manually_id=$_GET['manually_id'];
 }
 ?>
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 <form action='manually_collected_data_entry.php' method='post'>
-<table style='border:1px solid gray;'>
+<table class="EntryTableCLC" width="40%" align="center"><tr><td>
+<table class="miniHolderCLC">
 <tr>
-<th colspan=2>Enter Manually Collected Data</th>
+<th class="HeaderCLC" colspan=2>Enter Manually Collected Data</th>
 </tr>
 <tr>
-<th># of Manually Collected Forms</th><td><input type=text name='mc_no' size=50 /></td>
+<td># of Manually Collected Forms</td><td><input type=text name='mc_no' placeholder="# of Manually Collected Forms" /></td>
 </tr>
 <tr>
-<th>Cash Assistant</th>
+<td>Cash Assistant</td>
 
 <td>
 <select name='cash_assistant'>
@@ -55,11 +61,13 @@ if(isset($_GET['manually_id'])){
 </select>
 </td>
 </tr>
+</table>
+</td></tr>
 <tr>
-<th colspan=2>
+<td class="EntrySubmitCLC">
 <input type=hidden value='<?php echo $manually_id; ?>' name='manually_id' />
 <input type=submit value='Submit' />
-</th>
+</td>
 </tr>
 </table>
 </form>

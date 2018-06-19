@@ -5,7 +5,10 @@ session_start();
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 if(isset($_POST['dar_index'])){
 	$element=$_POST['formElement'];
 
@@ -112,11 +115,24 @@ if(isset($_POST['dar_index'])){
 	
 
 }
+	
+function ClCNF($a){
+	if($a>0){
+		$b = number_format($a);
+	}
+	elseif($a==0){
+		$b = "";
+	}
+	else{
+		$b = $a;
+	}
+	return $b;
+}			
 ?>
 <?php
 require("monitoring menu.php"); 
 ?>
-<link href="layout/landbank/logbook style.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+<link href="layout/landbank/logbook.css" rel="stylesheet" type="text/css"  id='stylesheet' />
 
 <script language='javascript' src='ajax.js'></script>
 <script language='javascript'>
@@ -330,8 +346,13 @@ function fillTicketSeller(ajaxHTML){
 
 }
 </script>
-<br>
-<br>
+<link href="layout/landbank/logbook style.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+<div class="PgTitle">
+Daily Accomplishment Report
+</div>
 <form action='daily_accomplishment.php' method='post'>
 <?php
 $mm=date("m");
@@ -343,8 +364,8 @@ $hh=date("h");
 $min=date("i");
 $aa=date("a");
 ?>
-
-
+<ul class="SearchBar">
+	<li>
 <select name='month'>
 <?php
 for($i=1;$i<13;$i++){
@@ -364,6 +385,8 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -384,6 +407,8 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -404,10 +429,12 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select> 
-
+	</li>
+	<li>
 <select name='station'>
 <?php
-$db=new mysqli("localhost","root","","station");
+
+$db=retrieveDb();
 
 $sql="select * from station";
 $rs=$db->query($sql);
@@ -428,10 +455,8 @@ for($i=0;$i<$nm;$i++){
 ?>
 
 </select>
-<input type=submit value='Get Records' />
-</form>
-<br>
-<br>
+	</li>
+
 <?php
 if(isset($_SESSION['month'])){
 	$daily_id="";
@@ -450,6 +475,25 @@ if(isset($_SESSION['month'])){
 	$row=$rs->fetch_assoc();
 	
 	$station_name=$row['station_name'];	
+	
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
+	
+	}
+	
+	
+	
+	
 }
 
 
@@ -511,67 +555,158 @@ if(isset($_POST['month'])){
 		$shift2=$shift_row['s2'];
 		$shift3=$shift_row['s3'];
 	}
+	
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
+	
+	}	
 }			
 
+?>
+	<li>
+<input type=submit value='Get Records' />
+	</li>
+	
+	<?php
+	if($_SESSION['login_type']=="1"){
+	?>
+	<li style="float:right">
+	<input type="button" onclick="PasaCLC()" value="Add New Entry" />
+	</li>
+	<?php
+	}
+	?>
+	<li style="float:right">
+<input type="button" onclick="window.open('generate_dr2c.php')" value="Generate DR2C" />
+</li>
+</ul>
+</form>
+<hr class="PgLine"/>
+
+<?php
 if($daily_id==""){
 }
 else {
 
 ?>
+
+
+
+
+
+<table class="TableHolderCLC">
+<tr>
+<td style="vertical-align:top">
+	<table class="TableCLC">
+		<th colspan="2" class="TableHeaderCLC">Station & Date</th>
+	<tr>
+		<td class="col1CLC">Station</td>
+		<td class="col2CLC"><?php echo $station_name; ?></td>
+	</tr>
+	<tr>
+		<td class="col1CLC">Date</td>
+		<td class="col2CLC"><?php echo $daily_name; ?></td>
+	</tr>
+	</table>
+</td>
+<td style="vertical-align:top">	
+	<table class="TableCLC">
+	<tr>
+		<th colspan="2" class="TableHeaderCLC">Station Supervisor
+<?php
+if($daily_id==""){
+}
+else {
+?>
+<a href='#' onclick="window.open('dar_ss_entry.php?daily_id=<?php echo $daily_id; ?>','_blank')" class="editBCLC">Edit</a>
+<?php
+}
+?>
+		</th>
+	</tr>
+	<tr>
+		<td style="width:20px">S1</td>
+		<td style="width:250px"><?php echo $shift1; ?></td>
+	</tr>
+	<tr>
+		<td>S2</td>
+		<td><?php echo $shift2; ?></td>
+	</tr>
+	<tr>
+		<td>S3</td>
+		<td><?php echo $shift3; ?></td>
+	</tr>
+	</table>
+</td>
+</tr>
+</table>
+<!--
 <table width=100% style='border:1px solid gray' id='menu'>
 <tr id='selectLogbook'>
 <td width=50%>
 Station:
-<?php
+<php
 echo $station_name;
-?>
+>
 </td>
 <td width=50%>
 Date: 
-<?php
+<php
 echo $daily_name;
-?>
+>
 </td>
 </tr>
 </table>
-<br>
+
 <table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
 <tr>
 <th colspan=6>Station Supervisors</th>
 </tr>
 <tr>
 <th>S1</th>
-<td><?php echo $shift1; ?></td>
+<td><php echo $shift1; ?></td>
 <th>S2</th>
-<td><?php echo $shift2; ?></td>
+<td><php echo $shift2; ?></td>
 <th>S3</th>
-<td><?php echo $shift3; ?></td>
+<td><php echo $shift3; ?></td>
 </tr>
 
 </table>
-<?php
+
+<php
 if($daily_id==""){
 }
 else {
 ?>
-<a href='#' onclick="window.open('dar_ss_entry.php?daily_id=<?php echo $daily_id; ?>','_blank')">Edit</a>
-<?php
+<a href='#' onclick="window.open('dar_ss_entry.php?daily_id=<php echo $daily_id; ?>','_blank')">Edit</a>
+<php
 }
 ?>
+-->
 <br>
 <br>
-<table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
+<table class='BigTableCLC'>
 <tr>
 <th rowspan=2>Reference ID</th>
 
 <th rowspan=2>Name</th>
 <th rowspan=2>Shift</th>
 <th rowspan=2>OT</th>
-<th rowspan=2>A/D No.</th>
-<th rowspan=2>Total Amount Remitted</th>
+<th rowspan=2 style="font-size:13px;">A/D No.</th>
+<th rowspan=2 style="font-size:13px;">Total Amount<br />Remitted</th>
 <th colspan=4>Number of Tickets Sold</th>
 
-<th rowspan=2>Total Amount of Refund</th>
+<th rowspan=2 style="font-size:13px;">Total Amount<br />of Refund</th>
 
 <th colspan=2>Discrepancy</th>
 
@@ -580,8 +715,7 @@ else {
 
 
 <th rowspan=2>Remarks</th>
-<th rowspan=2>Number of Human Errors</th>
-
+<th rowspan=2 style="font-size:13px;">Number of<br />Human Errors</th>
 </tr>
 <tr>
 <th>SJT</th>
@@ -751,28 +885,26 @@ else {
 			
 			
 			
-			
-			
 ?>			
 		<tr>	
-			<td><?php echo $reference_id; ?></td>
-			<td><?php echo $ticket_name; ?> <a href='#' onclick="fillEdit('ticket_seller','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $shift; ?> <a href='#' onclick="fillEdit('shift','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php if($sked_type=="ot"){ echo "X"; } ?></td>
-			<td align=center><?php echo $ad_no; ?> <a href='#' onclick="fillEdit('ad_no','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $remitted; ?> <a href='#' onclick="fillEdit('remitted','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $sjt; ?> <a href='#' onclick="fillEdit('ticket_sold','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $svt; ?> <a href='#' onclick="fillEdit('ticket_sold','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $sjd; ?> <a href='#' onclick="fillEdit('ticket_sold','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $svd; ?> <a href='#' onclick="fillEdit('ticket_sold','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $refund; ?> <a href='#' onclick="fillEdit('refund','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $shortage; ?> <a href='#' onclick="fillEdit('cash_discrepancy','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $overage; ?> <a href='#' onclick="fillEdit('cash_discrepancy','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $shortage_label; ?> <a href='#' onclick="fillEdit('ticket_discrepancy','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $overage_label; ?> <a href='#' onclick="fillEdit('ticket_discrepancy','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td><?php echo $remarks; ?> <a href='#' onclick="fillEdit('remarks','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $ticket_error_count; ?></td>
-			<td><a href='#' onclick="deleteRow('<?php echo $daily_row['id']; ?>','dar')" >X</a></td>
+			<td class="UnclickableCLC"><?php echo $reference_id; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('ticket_seller','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $ticket_name; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('shift','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $shift; ?></td>
+			<td class="UnclickableCLC" align=center><?php if($sked_type=="ot"){ echo "X"; } ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('ad_no','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $ad_no; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('remitted','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo ClCNF($remitted); ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('ticket_sold','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo ClCNF($sjt); ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('ticket_sold','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo ClCNF($svt); ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('ticket_sold','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo ClCNF($sjd); ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('ticket_sold','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo ClCNF($svd); ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('refund','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo ClCNF($refund); ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('cash_discrepancy','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo ClCNF($shortage); ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('cash_discrepancy','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $overage; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('ticket_discrepancy','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $shortage_label; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('ticket_discrepancy','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?> align=center><?php echo $overage_label; ?></td>
+			<td class="ClickableCLC" <?php if($_SESSION['login_type']=='1'){ ?> onclick="fillEdit('remarks','<?php echo $daily_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $remarks; ?></td>
+			<td class="UnclickableCLC" align=center><?php echo ClCNF($ticket_error_count); ?></td>
+			<td class="DeletableCLC"><a href='#' <?php if($_SESSION['login_type']=='1'){ ?> onclick="deleteRow('<?php echo $daily_row['id']; ?>','dar')" <?php } ?>>X</a></td>
 		</tr>
 <?php			
 		}
@@ -782,21 +914,248 @@ else {
 }
 ?>
 </table>
-<br>
-<div id='fillDar' name='fillDar'>
 
 
 
-</div>
-<br>
-<a href='#' onclick="window.open('dar_entry.php?daily_id=<?php echo $daily_id; ?>','_blank')">Add New Entry</a>
-<br>
-<br>
-<br>
-<a href='#' onclick="window.open('generate_dr2c.php')">Generate DR2C</a>
 
+
+
+
+
+
+<!--table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
+<tr>
+<th rowspan=2>Reference ID</th>
+
+<th rowspan=2>Name</th>
+<th rowspan=2>Shift</th>
+<th rowspan=2>OT</th>
+<th rowspan=2>A/D No.</th>
+<th rowspan=2>Total Amount Remitted</th>
+<th colspan=4>Number of Tickets Sold</th>
+
+<th rowspan=2>Total Amount of Refund</th>
+
+<th colspan=2>Discrepancy</th>
+
+<th colspan=2>Ticket Discrepancies</th>
+
+
+
+<th rowspan=2>Remarks</th>
+<th rowspan=2>Number of Human Errors</th>
+
+</tr>
+<tr>
+<th>SJT</th>
+<th>SVT</th>
+<th>DSJT</th>
+<th>DSVT</th>
+
+<th>Shortage</th>
+<th>Overage</th>
+
+<th>Shortage</th>
+<th>Overage</th>
+
+</tr>
+<php
+if($daily_id==""){
+}
+else {
+	$daily_sql="select * from dar where daily_id='".$daily_id."'";	
+	
+	$daily_rs=$db->query($daily_sql);
+	
+	$daily_nm=$daily_rs->num_rows;
+
+	if($daily_nm>0){
+		$reference_stamp=date("Ymd");
+
+		for($i=0;$i<$daily_nm;$i++){
+			$reference_id=$reference_stamp."_".$i;		
+			
+		
+			$daily_row=$daily_rs->fetch_assoc();
+	
+			$ts_sql="select * from ticket_seller where id='".$daily_row['ticket_seller']."' limit 1";
+			$ts_rs=$db->query($ts_sql);
+				
+			$ts_row=$ts_rs->fetch_assoc();
+
+			$ticket_name=$ts_row['last_name'].", ".$ts_row['first_name'];	
+			$shift=$daily_row['shift'];
+			$ad_no=$daily_row['ad_no'];
+			$remitted=$daily_row['remitted'];
+			
+			$refund=$daily_row['refund'];
+			$remarks=$daily_row['remarks'];
+			$sked=$daily_row['sked_type'];
+			
+			$svt="";
+			$sjt="";	
+			$svd="";
+			$sjd="";
+	
+
+//			$ticket_error_sql="select count(1) as error_count from ticket_error_daily inner join ticket_error on ticket_error_daily.id=ticket_error.ticket_daily_id where date='".$daily_date."' and station='".$station."' and ticket_seller='".$daily_row['ticket_seller']."' and machine_no='".$ad_no."'";
+
+			$ticket_error_sql="select ticket_error_daily.id as ticket_daily_id,ticket_error.id as ticket_error_id from ticket_error_daily inner join ticket_error on ticket_error_daily.id=ticket_error.ticket_daily_id where date='".$daily_date."' and station='".$station."' and ticket_seller='".$daily_row['ticket_seller']."'";
+			$ticket_error_rs=$db->query($ticket_error_sql);
+			$ticket_error_nm=$ticket_error_rs->num_rows;
+			$ticket_error_count=0;
+			if($ticket_error_nm>0){
+				$te_row=$ticket_error_rs->fetch_assoc();
+
+				$ticket_sum_sql="select sum(quantity) as sum_quantity from teemr_error_entry where ticket_error_id='".$te_row['ticket_error_id']."' and ticket_daily_id='".$te_row['ticket_daily_id']."'";		
+				$ticket_sum_rs=$db->query($ticket_sum_sql);
+				$ticket_sum_nm=$ticket_sum_rs->num_rows;
+				
+				if($ticket_sum_nm>0){
+					$ticket_sum_row=$ticket_sum_rs->fetch_assoc();
+				
+					$ticket_error_count=$ticket_sum_row['sum_quantity'];
+			
+				
+				}
+
+				
+			}
+/*
+			$ticket_error_sql="select count(1) as error_count from ticket_error_daily inner join ticket_error on ticket_error_daily.id=ticket_error.ticket_daily_id where date='".$daily_date."' and station='".$station."' and ticket_seller='".$daily_row['ticket_seller']."' and error_category='1'";
+
+			$ticket_error_rs=$db->query($ticket_error_sql);
+			$ticket_error_nm=$ticket_error_rs->num_rows;
+			$ticket_error_count=0;
+			
+			if($ticket_error_nm>0){
+				$te_row=$ticket_error_rs->fetch_assoc();
+				
+				$ticket_error_count=$te_row['error_count'];
+			}	
+	
+*/	
+	
+			$sold_sql="select * from ticket_sold where dar_id='".$daily_row['id']."' limit 1";
+			$sold_rs=$db->query($sold_sql);
+			$sold_nm=$sold_rs->num_rows;
+			
+			if($sold_nm>0){
+				$sold_row=$sold_rs->fetch_assoc();
+				$svt=$sold_row['svt'];
+				$sjt=$sold_row['sjt'];	
+				$svd=$sold_row['svd'];
+				$sjd=$sold_row['sjd'];
+		
+			}
+
+			$shortage="";
+			$overage="";
+			
+			$discrepancy_sql="select * from discrepancy where dar_id='".$daily_row['id']."' limit 1";
+			$discrepancy_rs=$db->query($discrepancy_sql);
+			$discrepancy_nm=$discrepancy_rs->num_rows;
+			
+			if($discrepancy_nm>0){
+				$discrepancy_row=$discrepancy_rs->fetch_assoc();
+				$shortage=$discrepancy_row['shortage'];
+				$overage=$discrepancy_row['overage'];
+			}
+			
+			$discrepancy_t_sql="select * from discrepancy_ticket where dar_id='".$daily_row['id']."'";
+			$discrepancy_t_rs=$db->query($discrepancy_t_sql);
+			$discrepancy_t_nm=$discrepancy_t_rs->num_rows;
+			
+			$shortage_label="";
+			$overage_label="";
+				
+			$short_count=0;
+			$over_count=0;
+			
+			if($discrepancy_t_nm>0){
+				for($m=0;$m<$discrepancy_t_nm;$m++){
+					$discrepancy_t_row=$discrepancy_t_rs->fetch_assoc();
+					
+					if($discrepancy_t_row['shortage']*1==0){
+					}
+					else {
+						if($short_count==0){
+						}
+						else {
+							$shortage_label.=", ";	
+
+							
+						
+						}
+						$shortage_label.=$discrepancy_t_row['shortage']." ".strtoupper($discrepancy_t_row['ticket_type']);
+
+						
+						$short_count++;	
+					}
+					if($discrepancy_t_row['overage']*1==0){
+					}
+					else {
+						if($over_count==0){
+						}
+						else {
+							$overage_label.=", ";	
+						}
+
+						$overage_label.=$discrepancy_t_row['overage']." ".strtoupper($discrepancy_t_row['ticket_type']);
+						
+						
+						$over_count++;		
+					}
+
+					
+				
+				}
+			}
+			
+			
+			
+			
+			
+?>			
+		<tr>	
+			<td><php echo $reference_id; ?></td>
+			<td><php echo $ticket_name; ?> <a href='#' onclick="fillEdit('ticket_seller','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $shift; ?> <a href='#' onclick="fillEdit('shift','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php if($sked_type=="ot"){ echo "X"; } ?></td>
+			<td align=center><php echo $ad_no; ?> <a href='#' onclick="fillEdit('ad_no','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $remitted; ?> <a href='#' onclick="fillEdit('remitted','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $sjt; ?> <a href='#' onclick="fillEdit('ticket_sold','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $svt; ?> <a href='#' onclick="fillEdit('ticket_sold','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $sjd; ?> <a href='#' onclick="fillEdit('ticket_sold','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $svd; ?> <a href='#' onclick="fillEdit('ticket_sold','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $refund; ?> <a href='#' onclick="fillEdit('refund','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $shortage; ?> <a href='#' onclick="fillEdit('cash_discrepancy','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $overage; ?> <a href='#' onclick="fillEdit('cash_discrepancy','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $shortage_label; ?> <a href='#' onclick="fillEdit('ticket_discrepancy','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $overage_label; ?> <a href='#' onclick="fillEdit('ticket_discrepancy','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td><php echo $remarks; ?> <a href='#' onclick="fillEdit('remarks','<php echo $daily_row['id']; ?>','<php echo $reference_id; ?>')">Edit</a></td>
+			<td align=center><php echo $ticket_error_count; ?></td>
+			<td><a href='#' onclick="deleteRow('<php echo $daily_row['id']; ?>','dar')" >X</a></td>
+		</tr>
+<php			
+		}
+
+	}
+
+}
+?>
+</table-->
+<br>
+<div id='fillDar' name='fillDar'></div>
+<a href='#' style="display:none;" id="AddNewEntryCLC" onclick="window.open('dar_entry.php?daily_id=<?php echo $daily_id; ?>','_blank')">Add New Entry</a>
+<!--a href='#' onclick="window.open('generate_dr2c.php')">Generate DR2C</a-->
 
 <?php
 }
 ?>
+<style>
+.miniLabel{
+max-width:30px;
+}
+</style>
 

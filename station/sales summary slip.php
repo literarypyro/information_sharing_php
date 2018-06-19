@@ -2,10 +2,13 @@
 session_start();
 ?>
 <?php
+require("db.php");
+?>
+<?php
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
+    $db=retrieveDb();
 if(isset($_POST['sales_daily_id'])){
 	$daily_id=$_POST['sales_daily_id'];
 	$ticket_type=$_POST['ticket_type'];
@@ -167,11 +170,11 @@ if(isset($_POST['ee_daily_id'])){
 <?php
 require("monitoring menu.php");
 ?>
-<link href="layout/landbank/logbook style.css" rel="stylesheet" type="text/css"  id='stylesheet' />
-
-<br>
-<br>
-
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+<div class="PgTitle">
+Sales based on SCS Data
+</div>
 <form action='sales summary slip.php' method='post'>
 <?php
 $mm=date("m");
@@ -183,7 +186,8 @@ $hh=date("h");
 $min=date("i");
 $aa=date("a");
 ?>
-
+<ul class="SearchBar">
+	<li>
 <select name='month'>
 <?php
 for($i=1;$i<13;$i++){
@@ -203,6 +207,8 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -223,6 +229,8 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -242,8 +250,9 @@ for($i=1999;$i<=$dateRecent;$i++){
 <?php
 }
 ?>
-</select> 
-
+</select>
+	</li>
+	<li>
 <select name='station'>
 <?php
 $sql="select * from station2";
@@ -258,10 +267,19 @@ for($i=0;$i<$nm;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <input type=submit value='Get Records' />
+	</li>
+	<li style="float:right">
+	<input type="button" value="Generate DR1" onclick="window.open('generate_dr1.php')">
+	</li>
+	<li style="float:right">
+	<input type="button" value="Generate DR8 (Entry/Exit)" onclick="window.open('generate_dr8.php')">
+	</li>
+</ul>
 </form>
-<br>
-<br>
+<hr class="PgLine"/>
 <?php
 if(isset($_SESSION['month'])){
 	$station=$_SESSION['station2'];
@@ -290,7 +308,20 @@ if(isset($_SESSION['month'])){
 		$daily_id=$id_row['id'];
 	}		
 	
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
 	
+	}		
 	
 }
 
@@ -334,7 +365,20 @@ if(isset($_POST['month'])){
 	$_SESSION['day']=$_POST['day'];
 	$_SESSION['year']=$_POST['year'];	
 	
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
 	
+	}		
 }
 ?>
 <?php
@@ -342,36 +386,32 @@ if($daily_id==""){
 }
 else {
 ?>
-<table width=100% style='border:1px solid gray' id='menu'>
-<tr id='selectLogbook'>
-<td width=50%>
-Station:
-<?php
-echo $station_name;
-?>
-</td>
-<td width=50%>
-Date: 
-<?php
-echo $daily_name;
-?>
-</td>
+<table class="TableCLC">
+<tr>
+	<th colspan="2" class="TableHeaderCLC">Station & Date</th>
+</tr>
+<tr>
+	<td class="col1CLC">Station</td>
+	<td class="col2CLC"><?php echo $station_name; ?></td>
+</tr>
+<tr>
+	<td class="col1CLC">Date</td>
+	<td class="col2CLC"><?php echo $daily_name;	?></td>
 </tr>
 </table>
 <?php
 }
 ?>
 <br>
-<table width=100% border='1px' style='border-collapse:collapse' class='logbookTable'>
+<table class="BigTableCLC">
 <tr>
-<th colspan=9>
+<th colspan=7>
 Sales (based on SCS Data)
 </th>
 </tr>
 <tr>
 <th rowspan=2>Type</th>
-<th colspan=2>Regular Sales</th>
-<th colspan=2>Discounted Sales</th>
+<th colspan=2>Sales</th>
 <th colspan=2>Refund</th>
 <th colspan=2>Unsold</th>
 
@@ -380,10 +420,7 @@ Sales (based on SCS Data)
 <th>Qty.</th><th>Amount</th>
 <th>Qty.</th><th>Amount</th>
 <th>Qty.</th><th>Amount</th>
-<th>Qty.</th><th>Amount</th>
 </tr>
-<tr>
-<th>Single Journey</th>
 <?php
 $regular_sales="&nbsp;";
 $discount_sales="&nbsp;";
@@ -420,9 +457,14 @@ $nm=$rs->num_rows;
 if($nm>0){
 	$row=$rs->fetch_assoc();
 	
-	$refund_sales=$row['reg_ticket_refund']."/".$row['disc_ticket_refund'];
-	$refund_amount=$row['reg_amount_refund']."/".$row['disc_amount_refund'];
+	$refund_sales=$row['reg_ticket_refund'];
+	$refund_amount=$row['reg_amount_refund'];
 
+	
+	$refund_disc_sales=$row['disc_ticket_refund'];
+	$refund_disc_amount=$row['disc_amount_refund'];
+	
+	
 //	$refund_reason=$row['reason_refund'];
 	
 }
@@ -433,18 +475,21 @@ $nm=$rs->num_rows;
 if($nm>0){
 	$row=$rs->fetch_assoc();
 	
-	$unsold_sales=$row['reg_ticket_unsold']."/".$row['disc_ticket_unsold'];
-	$unsold_amount=$row['reg_amount_unsold']."/".$row['disc_amount_unsold'];
+	$unsold_sales=$row['reg_ticket_unsold'];
+	$unsold_amount=$row['reg_amount_unsold'];
 
-//	$refund_reason=$row['reason_refund'];
+	$unsold_disc_sales=$row['disc_ticket_unsold'];
+	$unsold_disc_amount=$row['disc_amount_unsold'];
 	
 }
 
 ?>
+<tr>
+<th>Single Journey</th>
+
+
 	<td align=center><?php echo $regular_sales; ?></td>
 	<td align=center><?php echo $regular_amount; ?></td>
-	<td align=center><?php echo $discount_sales; ?></td>
-	<td align=center><?php echo $discount_amount; ?></td>
 
 	<td align=center><?php echo $refund_sales; ?></td>
 	<td align=center><?php echo $refund_amount; ?></td>
@@ -453,8 +498,21 @@ if($nm>0){
 	<td align=center><?php echo $unsold_amount; ?></td>
 
 </tr>
+
+
 <tr>
-<th>Stored Value</th>
+<th>Discounted Single Journey
+</th>
+	<td align=center><?php echo $discount_sales; ?></td>
+	<td align=center><?php echo $discount_amount; ?></td>
+
+	<td align=center><?php echo $refund_disc_sales; ?></td>
+	<td align=center><?php echo $refund_disc_amount; ?></td>
+
+	<td align=center><?php echo $unsold_disc_sales; ?></td>
+	<td align=center><?php echo $unsold_disc_amount; ?></td>
+
+</tr>
 <?php
 $regular_sales="&nbsp;";
 $discount_sales="&nbsp;";
@@ -491,9 +549,14 @@ $nm=$rs->num_rows;
 if($nm>0){
 	$row=$rs->fetch_assoc();
 	
-	$refund_sales=$row['reg_ticket_refund']."/".$row['disc_ticket_refund'];
-	$refund_amount=$row['reg_amount_refund']."/".$row['disc_amount_refund'];
+	$refund_sales=$row['reg_ticket_refund'];
+	$refund_amount=$row['reg_amount_refund'];
 
+	
+	$refund_disc_sales=$row['disc_ticket_refund'];
+	$refund_disc_amount=$row['disc_amount_refund'];
+	
+	
 //	$refund_reason=$row['reason_refund'];
 	
 }
@@ -504,35 +567,56 @@ $nm=$rs->num_rows;
 if($nm>0){
 	$row=$rs->fetch_assoc();
 	
-	$unsold_sales=$row['reg_ticket_unsold']."/".$row['disc_ticket_unsold'];
-	$unsold_amount=$row['reg_amount_unsold']."/".$row['disc_amount_unsold'];
+	$unsold_sales=$row['reg_ticket_unsold'];
+	$unsold_amount=$row['reg_amount_unsold'];
 
+	$unsold_disc_sales=$row['disc_ticket_unsold'];
+	$unsold_disc_amount=$row['disc_amount_unsold'];
+	
 }
 
 ?>
+
+
+
+
+<tr>
+<th>Stored Value</th>
 	<td align=center><?php echo $regular_sales; ?></td>
 	<td align=center><?php echo $regular_amount; ?></td>
-	<td align=center><?php echo $discount_sales; ?></td>
-	<td align=center><?php echo $discount_amount; ?></td>
-
 	<td align=center><?php echo $refund_sales; ?></td>
 	<td align=center><?php echo $refund_amount; ?></td>
 	<td align=center><?php echo $unsold_sales; ?></td>
 	<td align=center><?php echo $unsold_amount; ?></td>
 
 </tr>
+<tr>
+<th>Discounted Stored Value</th>
+
+	<td align=center><?php echo $discount_sales; ?></td>
+	<td align=center><?php echo $discount_amount; ?></td>
+
+	<td align=center><?php echo $refund_disc_sales; ?></td>
+	<td align=center><?php echo $refund_disc_amount; ?></td>
+	<td align=center><?php echo $unsold_disc_sales; ?></td>
+	<td align=center><?php echo $unsold_disc_amount; ?></td>
+
+</tr>
+
 </table>
-<br>
-<table width=80%>
+<?php
+if($_SESSION['login_type']=="1"){
+?>
+<table class="EntryTableCLC" style="margin-top:20px;">
 <tr>
-<td width=25% valign=top>
+<td width=30% valign=top>
 <form action='sales summary slip.php' method='post'>
-<table width=100% style='border:1px solid gray' class='logbookTable'>
+<table class="miniHolderCLC">
 <tr>
-<th colspan=2>Enter Sales</th>
+<th class="HeaderCLC" colspan="2">Enter Sales</th>
 </tr>
 <tr>
-<th>Ticket Type</th>
+<td>Ticket Type</td>
 <td>
 <select name='ticket_type'>
 <option value='sj'>Single Journey</option>
@@ -541,26 +625,26 @@ if($nm>0){
 </td>
 </tr>
 <tr>
-<th colspan=2>Regular Sales</th>
+	<td class="HeaderSubCLC" colspan="2">Regular Sales</td>
 </tr>
 <tr>
-<th>No. of Tickets Sold</th>
-<td><input type=text name='regular_sold' /></td>
+<td>No. of Tickets Sold</td>
+<td><input type=text name='regular_sold' placeholder="No. of Tickets Sold" /></td>
 </tr>
 <tr>
-<th>Sales Amount</th>
-<td><input type=text name='regular_amount' /></td>
+<td>Sales Amount</td>
+<td><input type=text name='regular_amount' placeholder="Sales Amount" /></td>
 </tr>
 <tr>
-<th colspan=2>Discounted Sales</th>
+	<td class="HeaderSubCLC" colspan="2">Discounted Sales</td>
 </tr>
 <tr>
-<th>No. of Tickets Sold</th>
-<td><input type=text name='discounted_sold' /></td>
+<td>No. of Tickets Sold</td>
+<td><input type=text name='discounted_sold' placeholder="No. of Tickets Sold" /></td>
 </tr>
 <tr>
-<th>Sales Amount</th>
-<td><input type=text name='discounted_amount' /></td>
+<td>Sales Amount</td>
+<td><input type=text name='discounted_amount' placeholder="Sales Amount" /></td>
 </tr>
 <?php
 	if($daily_id==""){
@@ -581,12 +665,12 @@ if($nm>0){
 </td>
 <td width=35% valign=top>
 <form action='sales summary slip.php' method='post'>
-<table width=100% style='border: 1px solid gray' class='logbookTable'>
+<table class="miniHolderCLC">
 	<tr>
-		<th colspan=3>Enter Refund</th>
+		<th class="HeaderCLC" colspan=3>Enter Refund</th>
 	</tr>
 	<tr>
-		<th>Ticket Type</th>
+		<td>Ticket Type</td>
 		<td colspan=2>
 		<select name='ticket_type'>
 		<option value='sj'>Single Journey</option>
@@ -595,20 +679,19 @@ if($nm>0){
 		</td>
 	</tr>
 	<tr>
-		<th>&nbsp;</th>
-		<td><b>Regular</b></td>
-		<td><b>Discounted</b></td>
-	
+		<td class="HeaderSubCLC">&nbsp;</td>
+		<td class="HeaderSubCLC">Regular</td>
+		<td class="HeaderSubCLC">Discounted</td>	
 	</tr>
 	<tr>
-		<th>No. of Tickets Refunded</th>
-		<td><input type=text name='regular_ticket_refunded' /></td>
-		<td><input type=text name='discounted_ticket_refunded' /></td>
+		<td>No. of Tickets Refunded</td>
+		<td><input type=text name='regular_ticket_refunded' placeholder="(Regular) No. of Tickets Refunded"/></td>
+		<td><input type=text name='discounted_ticket_refunded' placeholder="(Discounted) No. of Tickets Refunded" /></td>
 	</tr>
 	<tr>
-		<th>Refund Amount</th>
-		<td><input type=text name='regular_amount_refunded' /></td>
-		<td><input type=text name='discounted_amount_refunded' /></td>
+		<td>Refund Amount</td>
+		<td><input type=text name='regular_amount_refunded' placeholder="(Regular) Refund Amount" /></td>
+		<td><input type=text name='discounted_amount_refunded' placeholder="(Discounted) Refund Amount" /></td>
 
 	</tr>
 <?php
@@ -631,12 +714,12 @@ if($nm>0){
 <td width=40% valign=top>
 
 <form action='sales summary slip.php' method='post'>
-<table style='border: 1px solid gray' class='logbookTable'>
+<table class="miniHolderCLC">
 	<tr>
-		<th colspan=3>Enter Unsold</th>
+		<th class="HeaderCLC" colspan=3>Enter Unsold</th>
 	</tr>
 	<tr>
-		<th>Ticket Type</th>
+		<td>Ticket Type</td>
 		<td colspan=2>
 		<select name='ticket_type'>
 		<option value='sj'>Single Journey</option>
@@ -645,20 +728,20 @@ if($nm>0){
 		</td>
 	</tr>
 	<tr>
-		<th>&nbsp;</th>
-		<td><b>Regular</b></td>
-		<td><b>Discounted</b></td>
+		<td class="HeaderSubCLC">&nbsp;</td>
+		<td class="HeaderSubCLC">Regular</td>
+		<td class="HeaderSubCLC">Discounted</td>
 	
 	</tr>
 	<tr>
-		<th>No. of Tickets Unsold</th>
-		<td><input type=text name='regular_ticket_unsold' /></td>
-		<td><input type=text name='discounted_ticket_unsold' /></td>
+		<td>No. of Tickets Unsold</td>
+		<td><input type=text name='regular_ticket_unsold' placeholder="(Regular) No. of Tickets Unsold" /></td>
+		<td><input type=text name='discounted_ticket_unsold' placeholder="(Discounted) No. of Tickets Unsold" /></td>
 	</tr>
 	<tr>
-		<th>Unsold Amount</th>
-		<td><input type=text name='regular_amount_unsold' /></td>
-		<td><input type=text name='discounted_amount_unsold' /></td>
+		<td>Unsold Amount</td>
+		<td><input type=text name='regular_amount_unsold' placeholder="(Regular) Unsold Amount" /></td>
+		<td><input type=text name='discounted_amount_unsold' placeholder="(Discounted) Unsold Amount" /></td>
 
 	</tr>
 <?php
@@ -682,16 +765,19 @@ if($nm>0){
 </td>
 </tr>
 </table>
-<br>
-<table width=100%>
+<?php
+}
+?>
+<table width="100%" align="center" style="background:#A4A4A4;margin-top:20px;padding-top:10px;padding-bottom:10px;border:2px solid #777;">
 <tr>
-<td valign=top>
-<table width=100% border=1px style='border-collapse:collapse' class='logbookTable'>
+<td valign=top width="50%">
+<table class="BigTableCLC" width="100%">
 <tr>
-<th colspan=2>Data based on SCS Data</th>
+	<th colspan=2>Data based on SCS Data</th>
 </tr>
 <tr>
-<th>Fare Adjustment</th><th>Time Over</th>
+<th width="50%">Fare Adjustment</th>
+<th width="50%">Time Over</th>
 </tr>
 <?php
 $fare_adjustment="&nbsp;";
@@ -714,13 +800,14 @@ if($nm>0){
 </tr>
 </table>
 </td>
-<td  valign=top>
-<table width=100% border=1px style='border-collapse:collapse' class='logbookTable'>
+<td  valign=top width="50%">
+<table class="BigTableCLC" width="100%">
 <tr>
 <th colspan=2>Entry/Exit based on SCS</th>
 </tr>
 <tr>
-<th>Entry</th><th>Exit</th>
+<th width="50%">Entry</th>
+<th width="50%">Exit</th>
 </tr>
 <?php
 $entry="&nbsp;";
@@ -743,22 +830,25 @@ if($nm>0){
 </td>
 </tr>
 </table>
-<br>
-<table width=80%>
-<tr>
-<td width=20%>
+<?php
+if($_SESSION['login_type']=="1"){
+?>
 <form action='sales summary slip.php' method='post'>
-<table style='border:1px solid gray' class='logbookTable'>
+<table class="EntryTableCLC" width="100%" style="padding-top:10px;padding-bottom:10px;">
 <tr>
-	<th colspan=2>Enter Data</th>
+<td width="10%"></td>
+<td width="20%">
+<table class="miniHolderCLC">
+<tr>
+	<th class="HeaderCLC" colspan=2>Enter Data</th>
 </tr>
 <tr>
-	<th>Fare Adjustment</th>
-	<td><input type=text name='fare_adjustment' /></td>
+	<td>Fare Adjustment</td>
+	<td><input type=text name='fare_adjustment' placeholder="Fare Adjustment" /></td>
 </tr>	
 <tr>
-	<th>Time Over</th>
-	<td><input type=text name='time_over' /></td>
+	<td>Time Over</td>
+	<td><input type=text name='time_over' placeholder="Time Over" /></td>
 </tr>	
 <?php
 if($daily_id==""){
@@ -775,21 +865,29 @@ else {
 }
 ?>
 </table>
-</form>
 </td>
-<td width=80%>
+</form>
+<?php
+}
+?>
+<td width="10%"></td>
+<?php
+if($_SESSION['login_type']=="1"){
+?>
+
 <form action='sales summary slip.php' method='post'>
-<table style='border:1px solid gray' class='logbookTable'>
+<td width="20%">
+<table class="miniHolderCLC">
 <tr>
-	<th colspan=2>Enter Entry/Exit (from SCS)</th>
+	<th class="HeaderCLC" colspan=2>Enter Entry/Exit (from SCS)</th>
 </tr>
 <tr>
-	<th>Entry</th>
-	<td><input type=text name='entry' /></td>
+	<td>Entry</td>
+	<td><input type=text name='entry' placeholder="Entry" /></td>
 </tr>
 <tr>
-	<th>Exit</th>
-	<td><input type=text name='exit' /></td>
+	<td>Exit</td>
+	<td><input type=text name='exit' placeholder="Exit" /></td>
 </tr>
 <?php
 if($daily_id==""){
@@ -806,11 +904,13 @@ else {
 }
 ?>
 </table>
-</form>
 </td>
+<td width="10%"></td>
 </tr>
 </table>
-<br>
-<a href='#' onclick="window.open('generate_dr1.php')">Generate DR1</a>
-<br>
-<a href='#' onclick="window.open('generate_dr8.php')">Generate DR8 (Entry/Exit)</a>
+</form>
+<?php
+}
+?>
+<!--a href='#' onclick="window.open('generate_dr1.php')">Generate DR1</a>
+<a href='#' onclick="window.open('generate_dr8.php')">Generate DR8 (Entry/Exit)</a-->

@@ -80,16 +80,21 @@ if(isset($_POST['ticket_seller'])){
 	echo "</script>";	
 }
 ?>
-<link href="layout/landbank/control slip.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 
 <form action='ticket_encoding_entry.php' method='post'>
-<table style='border:1px solid gray' class='controlTable'>
+<table class="EntryTableCLC" width="50%" align="center"><tr><td>
+<table class="miniHolderCLC">
 <tr>
-<th>SS In-Charge</th>
-<td><input type=text name='ss_incharge' size=50 /></td>
+	<th class="HeaderCLC" colspan="2">Add - Ticket Encoding Error</th>
 </tr>
 <tr>
-<th>Shift</th>
+<td>SS In-Charge</td>
+<td><input type=text name='ss_incharge' placeholder="SS In-Charge" /></td>
+</tr>
+<tr>
+<td>Shift</td>
 <td>
 <select name='shift'>
 <option>1</option>
@@ -102,7 +107,7 @@ if(isset($_POST['ticket_seller'])){
 </td>
 </tr>
 <tr>
-<th>Ticket Seller</th>
+<td>Ticket Seller</td>
 <td>
 
 <select name='ticket_seller'>
@@ -127,14 +132,14 @@ for($i=0;$i<$nm;$i++){
 </td>
 </tr>
 <tr>
-<th>Machine No.</th>
+<td>Machine No.</td>
 <td>
 <select name='machine_type'>
 <option value='AD'>A/D</option>
 <option value='TIM'>TIM</option>
 </select>
 
-<input type=text name='machine_no' size=5 />
+<input type=text name='machine_no' placeholder="Machine No." style="width:70%;"/>
 </td>
 </tr>
 <?php
@@ -180,7 +185,7 @@ for($i=0;$i<$nm;$i++){
 -->
 
 <tr>
-<th>Time of Occurence</th>
+<td>Time of Occurence</td>
 <td>
 <select name='general_month'>
 <?php
@@ -301,15 +306,14 @@ for($i=0;$i<=59;$i++){
 </tr>
 
 <tr>
-<th>&nbsp;</th>
-<td><b>Report Number</b></td>
+<th colspan="2" class="HeaderCLC">Report Number</th>
 <!--
 <th colspan=2>Report Number</th>
 -->
 </tr>
 <tr>
 <td>Record No.</td>
-<td><input type=text name='record_no' /></td>
+<td><input type=text name='record_no' placeholder="Record No." /></td>
 </tr>
 <!--
 <tr>
@@ -319,14 +323,10 @@ for($i=0;$i<=59;$i++){
 -->
 <tr>
 <td>Remarks</td>
-<td><textarea name='remarks' cols=40 rows=4></textarea></td>
+<td><textarea name='remarks' cols=40 rows=4 placeholder="Remarks"></textarea></td>
 </tr>
-
-
-
-
-
-
+</table>
+</td></tr>
 <br>
 <?php
 if(isset($_GET['daily_id'])){
@@ -340,11 +340,11 @@ if($daily_id==""){
 else {
 ?>
 <tr>
-<th colspan=2><input type=hidden name='daily_id' value='<?php echo $daily_id; ?>' /><input type='submit' value='Submit' /></th>
+<td class="EntrySubmitCLC"><input type=hidden name='daily_id' value='<?php echo $daily_id; ?>' /><input type='submit' value='Submit' /></td>
 </tr>
 
 <?php
 }
 ?>
-
-</table></form>
+</table>
+</form>

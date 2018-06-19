@@ -210,15 +210,19 @@ function fillEdit(element,refund_id,reference_id){
 }
 */
 </script>
-<link href="layout/landbank/logbook style.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
 
-<table style='border:1px solid gray' width=100% class='controlslip'>
+<table class="TableCLC2" align="center">
 <tr>
-<td colspan=2><b>Ticket Seller:</b> <?php echo $ticket_seller_name; ?></td>
+	<th colspan="2">Details</th>
 </tr>
 <tr>
-<td><b>ID Number:</b> <?php echo $ticket_seller_id; ?></td>
-<td><b>AD Number:</b> <?php echo $ad_no; ?></td>
+<td colspan=2>Ticket Seller:<b> <?php echo $ticket_seller_name; ?></td>
+</tr>
+<tr>
+<td>ID Number:<b> <?php echo $ticket_seller_id; ?></td>
+<td>AD Number:<b> <?php echo $ad_no; ?></td>
 </tr>
 </table>
 <?php
@@ -231,8 +235,7 @@ function fillEdit(element,refund_id,reference_id){
 */
 }
 ?>
-<br>
-<table border=1 width=100% style='border-collapse:collapse;' class='logbookTable'>
+<table class="BigTableCLC">
 <tr>
 <th>Judge Code/MTC</th>
 <th>Quantity</th>
@@ -253,7 +256,7 @@ for($i=0;$i<$nm;$i++){
 	<td align=center><?php echo $row['quantity']; ?></td>
 	
 	
-	<td><a href='#' onclick="deleteRow('<?php echo $row['id']; ?>','teemr_error_entry','<?php echo $ticket_error_id; ?>','<?php echo $ticket_error_daily_id; ?>')">X</a></td>
+	<td class="DeletableCLC"><a href='#' style="text-decoration:none;" onclick="deleteRow('<?php echo $row['id']; ?>','teemr_error_entry','<?php echo $ticket_error_id; ?>','<?php echo $ticket_error_daily_id; ?>')">X</a></td>
 </tr>
 <?php
 	/*
@@ -268,18 +271,17 @@ for($i=0;$i<$nm;$i++){
 */
 ?>
 </table>
-<br>
 <div id='fillRefund' name='fillRefund'></div>
-<br>
-<br>
+
 <form action='teemr_error_entry_1.php?ticket_error_id=<?php echo $ticket_error_id; ?>&ticket_daily_id=<?php echo $ticket_error_daily_id; ?>' method='post'>
-<table style='border:1px solid gray' class='controlslip'>
+<table class="EntryTableCLC" width="25%" align="center"><tr><td>
+<table class="miniHolderCLC">
 <tr>
-<th colspan=2>Add Entry</th>
+<th class="HeaderCLC" colspan=2>Add Entry</th>
 </tr>
 <tr>
-<th>Judge Code/MTC</th>
-<td>
+<td width="40%">Judge Code/MTC</td>
+<td width="60%">
 <select name='error'>
 <?php
 $sql="select * from teemr_error_list"; 
@@ -300,20 +302,21 @@ for($i=0;$i<$nm;$i++){
 <td><input type='text' name='serialno' /></td></tr>
 -->
 <tr>
-<th>Quantity</th>
-<td><input type='text' name='quantity' /></td>
+<td>Quantity</td>
+<td><input type='text' name='quantity' placeholder="Quantity" /></td>
 </tr>
+</table></td></tr>
 <?php
 if($ticket_error_id==""){
 }
 else {
 ?>
 <tr>
-<th colspan=2>
+<td align="center" style="padding:15px 0px;">
 <input type=hidden name='ticket_error_id' value='<?php echo $ticket_error_id; ?>' />
 <input type=hidden name='ticket_daily_id' value='<?php echo $ticket_error_daily_id; ?>' />
 <input type=submit value='Submit' />
-</th>
+</td>
 </tr>
 <?php
 }

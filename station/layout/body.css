@@ -1,0 +1,204 @@
+body{
+margin:0px;
+background-color:#CCC;
+}
+
+input[type=text], textarea, select{
+margin:2px 1px;
+}
+input[type=text], textarea{
+border:1px solid #888;
+padding:4px 3px;
+font-family:Verdana;
+font-size:12px;
+width:99%
+}
+
+input[type=text]:hover, textarea:hover{
+background:#DDD;
+}
+input[type=text]:focus,textarea:focus{
+background:#EDEBAB;
+}
+
+
+.SearchBar{
+max-width:100%;
+height:20px;
+list-style:none;
+}
+.SearchBar li{
+float:left;
+padding: 2px 5px;
+}
+
+.PgTitle{
+margin-top:40px;
+margin-bottom:10px;
+font-family:Verdana;
+font-size:18px;
+font-weight:bold;
+color:#333;
+text-align:left;
+padding:0px 20px;
+}
+.PgLine{
+margin-top:20px;
+margin-bottom:40px;
+border:2px groove #E8E6E6;
+}
+
+.TableHolderCLC{
+width:100%;
+}
+
+.editBCLC{
+float:right;
+padding-right:5px;
+color:#FFC954;
+font-size:11px;
+}
+
+
+.col1CLC{
+width:50px;
+}
+.col2CLC{
+min-width:200px;
+}
+
+.TableCLC, .TableCLC2{
+border-collapse:collapse;
+font-family:Verdana;
+background:rgb(240,240,240);
+color:#444;
+margin-bottom:25px;
+border:2px solid #888;
+box-shadow:0px 0px 3px 0px #999;
+}
+
+.TableCLC th, .TableCLC2 th{
+font-size:13px;
+padding:5px 2px;
+border:1px solid #CCC;
+background-color:rgb(70,70,70);
+color:#DDD;
+}
+.TableCLC td, .TableCLC2 td{
+padding:3px 5px;
+border:1px solid #CCC;
+}
+
+.TableCLC2{
+font-size:12px;
+width:80%;
+margin-top:20px;
+}
+.TableCLC td:first-child{
+font-size:12px;
+}
+.TableCLC td:last-child{
+padding-left:10px;
+font-weight:bold;
+font-size:14px;
+}
+
+.mainHeaderCLC{
+font-weight:bold;
+}
+
+.EntryTableCLC{
+border-collapse:collapse;
+margin-top:10px;
+border:2px solid #444;
+font-family:Verdana;
+text-align:left;
+background-color:#6a6a6a;
+}
+.bordersCLC td{
+border:1px solid #999;
+}
+.HeaderCLC{
+background-color:#A3715F;
+background:url(bg3.png) 100%;
+border-top:1px solid #222;
+border-bottom:1px solid #222;
+color:#ECECEC;
+font-weight:bold;
+font-size:12px;
+text-align:center;
+padding:8px 2px;
+}
+.HeaderSubCLC{
+text-align:center;
+font-weight:bold;
+background:#4f5d66;
+border-top:1px solid #444;
+border-bottom:1px solid #444;
+}
+.miniHolderCLC{
+width:100%;
+border-collapse:collapse;
+margin:0px;
+background-color:#666;
+border:1px solid #999;
+box-shadow:0px 0px 5px 1px #555;
+}
+.miniHolderCLC td{
+vertical-align:middle;
+padding:5px 3px;
+color:#EEE;
+font-size:12px;
+font-family:Verdana;
+}
+
+
+.ClickableCLC:hover{
+cursor:pointer;
+background-color:rgba(245,217,105,1);
+}
+.UnclickableCLC{
+cursor:not-allowed;
+}
+.XmarkCLC{
+text-align:center;
+color:green;
+}
+.DeletableCLC{
+text-align:center;
+text-decoration:none;
+}
+.DeletableCLC a{
+color:red;
+}
+.BigTableCLC{
+font-family:Calibri;
+border-collapse:collapse;
+width:100%;
+border:2px solid #888;
+}
+.BigTableCLC th, .BigTableCLC td{
+border:1px solid #999;
+}
+.BigTableCLC th{
+background-color:rgb(75,75,75);
+color:#DDD;
+border:1px solid #777;
+}
+.BigTableCLC tr:first-child th{
+font-size:15px;
+}
+.BigTableCLC tr:nth-child(1n+2) th{
+font-size:13px;
+}
+
+.BigTableCLC td{
+font-size:14px;
+padding:5px 1px;
+}
+.BigTableCLC tr:nth-child(odd){
+background-color:#EEE;
+}
+.BigTableCLC tr:nth-child(even){
+background-color:#BBB;
+}

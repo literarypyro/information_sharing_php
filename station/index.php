@@ -1,4 +1,4 @@
 <?php
-header("Location: monitoring menu.php");
+header("Location: login.php");
 
 ?>

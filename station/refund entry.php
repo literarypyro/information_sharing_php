@@ -62,12 +62,18 @@ if(isset($_GET['daily_id'])){
 	$daily_id=$_GET['daily_id'];
 }
 ?>
-<link href="layout/landbank/logbook style.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 
 <form action="refund entry.php" method='post'>
-<table style='border:1px solid gray' class='controlslip'>
+<table class="EntryTableCLC" width="50%" align="center"><tr><td>
+<table class="miniHolderCLC">
 <tr>
-<th>Ticket Seller</th>
+	<th class="HeaderCLC" colspan="2">Add - Refund Entry</th>
+</tr>
+<tr>
+<td>Ticket Seller</td>
 <td>
 <select name='ticket_seller'>
 <?php
@@ -88,11 +94,11 @@ for($i=0;$i<$nm;$i++){
 </td>
 </tr>
 <tr>
-<th>AD No.</th>
-<td><input type=text name='ad_no' /></td>
+<td>AD No.</td>
+<td><input type=text name='ad_no' placeholder="AD No." /></td>
 </tr>
 <tr>
-<th>Refund Time</th>
+<td>Refund Time</td>
 <td>
 <select name='general_month'>
 <?php
@@ -213,7 +219,7 @@ for($i=0;$i<=59;$i++){
 </td>
 </tr>
 <tr>
-<th>Station</th>
+<td>Station</td>
 <td>
 <select name='station'>
 <?php
@@ -233,16 +239,19 @@ for($i=0;$i<$nm;$i++){
 </select>
 </td>
 </tr>
+</table>
+</td>
+</tr>
 <?php
 if($daily_id==""){
 }
 else {
 ?>
 <tr>
-	<th colspan=2>
+	<td class="EntrySubmitCLC">
 		<input type=hidden name='daily_id' value='<?php echo $daily_id; ?>' />
 		<input type=submit value='Submit' />
-	</th>
+	</td>
 </tr>
 <?php
 }

@@ -322,8 +322,11 @@ function fillTicketSeller(ajaxHTML){
 
 
 </script>
-<br>
-<br>
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+<div class="PgTitle">
+Refund Monitoring
+</div>
 <form action='refund daily.php' method='post'>
 <?php
 $mm=date("m");
@@ -336,7 +339,8 @@ $min=date("i");
 $aa=date("a");
 ?>
 
-
+<ul class="SearchBar">
+	<li>
 <select name='month'>
 <?php
 for($i=1;$i<13;$i++){
@@ -356,6 +360,8 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -376,6 +382,8 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -395,8 +403,9 @@ for($i=1999;$i<=$dateRecent;$i++){
 <?php
 }
 ?>
-</select> 
-
+</select>
+	</li>
+	<li>
 <select name='station'>
 <?php
 $db=new mysqli("localhost","root","","station");
@@ -420,9 +429,19 @@ for($i=0;$i<$nm;$i++){
 ?>
 
 </select>
+	</li>
+	<li>
 <input type=submit value='Get Records' />
+	</li>
+	<li style="float:right;">
+	<input type="button" value="Add New Refund Entry" onclick="PasaCLC()" />
+	</li>
+	<li style="float:right;">
+	<input type="button" onclick="window.open('generate_reason_refund.php')" value="Generate Reasons for Refund Report" />
+	</li>
+</ul>
 </form>
-<br><br>
+<hr class="PgLine"/>
 <?php
 $db=new mysqli("localhost","root","","station");
 if(isset($_SESSION['month'])){
@@ -501,27 +520,24 @@ if($daily_id==""){
 }
 else {
 ?>
-<table width=100% style='border:1px solid gray' id='menu'>
-<tr id='selectLogbook'>
-<td width=50%>
-Station:
-<?php
-echo $station_name;
-?>
-</td>
-<td width=50%>
-Date: 
-<?php
-echo $daily_name;
-?>
-</td>
+<table class="TableCLC">
+<tr>
+	<th colspan="2" class="TableHeaderCLC">Station & Date</th>
+</tr>
+<tr>
+	<td class="col1CLC">Station</td>
+	<td class="col2CLC"><?php echo $station_name; ?></td>
+</tr>
+<tr>
+	<td class="col1CLC">Date</td>
+	<td class="col2CLC"><?php echo $daily_name;	?></td>
 </tr>
 </table>
 <?php
 }
 ?>
 <br>
-<table width=100% border=1px style='border-collapse:collapse' class='logbookTable'>
+<table class="BigTableCLC">
 <tr>
 <th>Reference ID</th>
 <th>Ticket Seller</th>
@@ -531,6 +547,18 @@ echo $daily_name;
 <th>Time</th>
 <th>Number of <br>Tickets Refunded</th>
 </tr>
+
+
+<!--table width=100% border=1px style='border-collapse:collapse' class='logbookTable'>
+<tr>
+<th>Reference ID</th>
+<th>Ticket Seller</th>
+<th>ID Number</th>
+<th>AD Number</th>
+<th>Date</th>
+<th>Time</th>
+<th>Number of <br>Tickets Refunded</th>
+</tr-->
 <?php
 $sql="select * from refund_ticket_seller where refund_daily_id='".$daily_id."'";
 $rs=$db->query($sql);
@@ -556,12 +584,12 @@ for($i=0;$i<$nm;$i++){
 	$station=$row['station'];
 ?>
 <tr>
-	<td align=center><?php echo $reference_id; ?></td>
-	<td align=center><?php echo $ticket_seller_name; ?> <a href='#' onclick="fillEdit('ticket_seller','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-	<td align=center><?php echo $ticket_seller_id; ?> <a href='#' onclick="fillEdit('ticket_seller','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-	<td align=center><?php echo $ad_no; ?> <a href='#' onclick="fillEdit('ad_no','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-	<td align=center><?php echo $refund_date; ?> <a href='#' onclick="fillEdit('refund_time','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-	<td align=center><?php echo $refund_time; ?> <a href='#' onclick="fillEdit('refund_time','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
+	<td class="UnclickableCLC" align=center><?php echo $reference_id; ?></td>
+	<td class="ClickableCLC" onclick="fillEdit('ticket_seller','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $ticket_seller_name; ?></td>
+	<td class="ClickableCLC" onclick="fillEdit('ticket_seller','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $ticket_seller_id; ?></td>
+	<td class="ClickableCLC" onclick="fillEdit('ad_no','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $ad_no; ?></td>
+	<td class="ClickableCLC" onclick="fillEdit('refund_time','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $refund_date; ?></td>
+	<td class="ClickableCLC" onclick="fillEdit('refund_time','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $refund_time; ?></td>
 <?php	
 	$refund_count_sql="select * from refund where refund_id='".$refund_id."'";	
 	$refund_count_rs=$db->query($refund_count_sql);
@@ -574,11 +602,11 @@ for($i=0;$i<$nm;$i++){
 	}
 	else {
 ?>
-	<td align=center><a href='#' onclick="window.open('refund_ticket.php?refund_id=<?php echo $refund_id; ?>&station=<?php echo $station; ?>')">Fill Refund</a>
+	<td align=center><a href='#' onclick="window.open('refund_ticket.php?refund_id=<?php echo $refund_id; ?>&station=<?php echo $station; ?>')">Fill Refund</a></td>
 <?php
 	}
 ?>	
-	 <a href='#' onclick="deleteRow('<?php echo $refund_id; ?>','refund_person')">X</a>
+	 <td class="DeletableCLC"><a href='#' onclick="deleteRow('<?php echo $refund_id; ?>','refund_person')">X</a>
 
 	</td>
 </tr>
@@ -598,11 +626,8 @@ if($daily_id==""){
 }
 else {
 ?>
-<a href="#" onclick="window.open('refund entry.php?daily_id=<?php echo $daily_id; ?>')">Add New Refund Entry</a>
-<br>
-<br>
-<br>
-<a href='#' onclick="window.open('generate_reason_refund.php')">Generate Reasons for Refund Report</a>
+<a href="#" style="display:none;" id="AddNewEntryCLC" onclick="window.open('refund entry.php?daily_id=<?php echo $daily_id; ?>')">Add New Refund Entry</a>
+<!--a href='#' onclick="window.open('generate_reason_refund.php')">Generate Reasons for Refund Report</a-->
 
 
 <?php

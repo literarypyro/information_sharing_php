@@ -2,7 +2,10 @@
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 if(isset($_POST['incident_month'])){
 	$year=$_POST['incident_year'];
 	$month=$_POST['incident_month'];
@@ -110,21 +113,26 @@ function checkOthers(){
 	}
 }
 </script>
-<link href="layout/landbank/control slip.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 
 <form action='incident_report.php' method='post'>
-<table style='border:1px solid gray' class='controlTable'>
+<table class="EntryTableCLC" width="100%">
+<tr><td width="28%" valign="top">
+<table class="miniHolderCLC">
 <tr>
-<td>Station Supervisor</td>
-<td><input type=text name='supervisor' size=50 /></td>
+	<th class="HeaderCLC" colspan="2">Place & Time Detail</th>
+</tr>
+<tr>
+<td width="30%">Station Supervisor</td>
+<td width="70%"><input type="text" name='supervisor' placeholder="Station Supervisor" /></td>
 </tr>
 <tr>
 <td>Station Name</td>
 <td>
 <select name='station'>
 <?php
-$db=new mysqli("localhost","root","","station");
-$sql="select * from station";
+$db=retrieveDb();$sql="select * from station";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;
 for($i=0;$i<$nm;$i++){
@@ -138,7 +146,8 @@ for($i=0;$i<$nm;$i++){
 </td>
 </tr>
 <tr>
-<td>Date/Time:</td><td>
+<td>Date</td>
+<td>
 <select name='general_month'>
 <?php
 $mm=date("m");
@@ -207,6 +216,11 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select>
+</td>
+</tr>
+<tr>
+<td>Time</td>
+<td>
 <select name='general_hour'>
 <?php
 for($i=1;$i<=12;$i++){
@@ -257,11 +271,16 @@ for($i=0;$i<=59;$i++){
 </td>
 </tr>
 </table>
-<br>
-<table style='border:1px solid gray' width='570' class='controlTable'>
+</td>
+
+<td width="35%">
+<table class="miniHolderCLC">
 <tr>
-<td>Time of Incident</td>
-<td>
+	<th class="HeaderCLC" colspan="2">Incident Detail</th>
+</tr>
+<tr>
+<td width="40%">Date of Incident</td>
+<td width="60%">
 <select name='incident_month'>
 <?php
 $mm=date("m");
@@ -329,6 +348,10 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select>
+</td></tr>
+<tr>
+<td>Time of Incident</td>
+<td>
 <select name='incident_hour'>
 <?php
 for($i=1;$i<=12;$i++){
@@ -382,25 +405,24 @@ for($i=0;$i<=59;$i++){
 </tr>
 <tr>
 <td>Location of Incident</td>
-<td><input type=text name='location' size=50 /></td>
+<td><input type=text name='location' placeholder="Location of Incident" /></td>
 </tr>
 <tr>
 <td>Contact Number</td>
-<td><input type=text name='contact_no' /></td>
+<td><input type=text name='contact_no' placeholder="Contact Number" /></td>
 </tr>
 
 <tr>
 <td>Person/s Involved</td>
-<td><textarea name='persons' rows=5 cols=50  ></textarea></td>
+<td><textarea name='persons' rows=5 placeholder="Person/s Involved"></textarea></td>
 </tr>
 <tr>
 <td>Nature of Incident</td>
 <td>
-<select name='nature' id='nature' onchange='checkOthers()'>
+<select name='nature' id='nature' onchange='checkOthers()' placeholder="Nature of Incident">
 
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from nature_incident";
 $rs=$db->query($sql);
 
@@ -420,48 +442,51 @@ for($i=0;$i<$nm;$i++){
 </tr>
 <tr>
 <td>Circumstances</td>
-<td><textarea name='circumstances' rows=5 cols=50  ></textarea></td>
+<td><textarea name='circumstances' rows=5 placeholder="Circumstances"></textarea></td>
 </tr>
 <tr>
 <td>Observation on the CCTV Footage</td>
-<td><textarea name='cctv' rows=5 cols=50  ></textarea></td>
+<td><textarea name='cctv' rows=5 placeholder="Observation on the CCTV Footage"></textarea></td>
 </tr>
 
 <tr>
-<th colspan=2>Endorsed To:</th>
+<td colspan="2" class="HeaderCLC">Endorsed To:</td>
 </tr>
 <tr>
 <td>Office</td>
-<td><input type=text name='endorsed_office' size=50 /></td>
+<td><input type=text name='endorsed_office' placeholder="Office"/></td>
 </tr>
 <tr>
 <td>Person</td>
-<td><input type=text name='endorsed_person' size=50 /></td>
+<td><input type=text name='endorsed_person' placeholder="Person"/></td>
 </tr>
 </table>
-<br>
-<table style='border:1px solid gray' width=570 class='controlTable'>
-<tr><th colspan=2>Action Taken</th></tr>
+</td>
+
+<td valign="top" width="25%">
+<table class="miniHolderCLC">
+<tr><th colspan="2" class="HeaderCLC">Action Taken</th></tr>
 <tr>
-<td>Action Taken by Supervisor</td>
-<td><textarea name='action_supervisor' rows=5 cols=50  ></textarea></td>
+<td width="30%">Action Taken by Supervisor</td>
+<td width="70%"><textarea name='action_supervisor' rows=5 placeholder="Action Taken" ></textarea></td>
 </tr>
 <tr>
 <td>Action Taken by Station Base</td>
-<td><textarea name='action_base' rows=5 cols=50  ></textarea></td>
+<td><textarea name='action_base' rows=5 placeholder="Action Taken by Station Base"  ></textarea></td>
 </tr>
 <tr>
 <td>Recommendation of Supervisor</td>
-<td><textarea name='recom_supervisor' rows=5 cols=50  ></textarea></td>
+<td><textarea name='recom_supervisor' rows=5 placeholder="Recommendation of Supervisor" /></textarea></td>
 </tr>
 <tr>
 <td>Recommendation of Station Base</td>
-<td><textarea name='recom_base' rows=5 cols=50  ></textarea></td>
+<td><textarea name='recom_base' rows=5 placeholder="Recommendation of Station Base" /></textarea></td>
 </tr>
 </table>
-<table width=570>
+</td>
+</tr>
 <tr>
-<td align=center><input type=submit value='Submit' /></td>
-
+<td colspan="3" class="EntrySubmitCLC"><input type=submit value='Submit' /></td>
+</tr>
 </table>
 </form>

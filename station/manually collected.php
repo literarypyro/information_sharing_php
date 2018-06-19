@@ -2,11 +2,13 @@
 session_start();
 ?>
 <?php
+require("db.php");
+?>
+<?php
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
-?>
+$db=retrieveDb();?>
 <?php
 require("monitoring menu.php");
 ?>
@@ -356,10 +358,12 @@ function fillCashAssist(ajaxHTML){
 
 
 </script>
-<br>
-<br>
 
-
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+<div class="PgTitle">
+Manually Collected Monitoring
+</div>
 
 <form action='manually collected.php' method='post'>
 <?php
@@ -372,11 +376,8 @@ $hh=date("h");
 $min=date("i");
 $aa=date("a");
 ?>
-
-<table style='border:1px solid gray' class='logbookTable'>
-<tr>
-<td>Date</td>
-<td>
+<ul class="SearchBar">
+<li>
 <select name='month'>
 <?php
 for($i=1;$i<13;$i++){
@@ -396,6 +397,8 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+</li>
+<li>
 <select name='day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -416,6 +419,8 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+</li>
+<li>
 <select name='year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -436,16 +441,11 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select> 
-</td>
-</tr>
-<tr>
-<td>Station
-</td>
-<td>
+</li>
+<li>
 <select name='station'>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from station";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;
@@ -454,46 +454,25 @@ for($i=0;$i<$nm;$i++){
 
 ?>
 	<option value='<?php echo $row['id']; ?>'><?php echo $row['station_name']; ?></option>
-
-
-
-
 <?php
 }
-
-
 ?>
-
 </select>
-</td>
-</tr>
-<tr>
-<td>Shift</td>
-<td>
+</li>
+<li>
 <select name='shift'>
-<option>1</option>
-<option>2</option>
-<option>3</option>
-<option>4</option>
-<option>5</option>
-<option>6</option>
+<option value="1">S1</option>
+<option value="2">S2</option>
+<option value="3">S3</option>
+<option value="4">S4</option>
+<option value="5">S5</option>
+<option value="6">S6</option>
 </select>
-</td>
-</tr>
-<tr>
-<td>Supervisor</td>
-<td>
-<input type=text name='supervisor' size=30 />
-</td>
-</tr>
-<tr>
-<th colspan=2><input type=submit value='Get Records' />
-</th>
-</tr>
-</table>
-</form>
-<br>
-<br>
+</li>
+<li>
+<input type="text" name="supervisor" placeholder="Supervisor" />
+</li>
+
 <?php
 $daily_id="XXX";
 
@@ -535,6 +514,22 @@ if(isset($_SESSION['month'])){
 		
 	}
 
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
+	
+	}		
+	
+	
 }
 if(isset($_POST['month'])){
 	$year=$_POST['year'];
@@ -630,48 +625,100 @@ if(isset($_POST['month'])){
 	$_SESSION['year']=$_POST['year'];	
 	$_SESSION['manually_shift']=$shift;
 	
+	if($_SESSION['user_station']==$station){
+		$_SESSION['login_type']=="1";
+	}
+	else {
+		if($_SESSION['user_role']=="3"){
+			$_SESSION['login_type']==$_SESSION['user_role'];
+		
+		}
+		else {
+			$_SESSION['login_type']=="2";
+		
+		}
+	
+	}		
 	
 }
 
 
 ?>
-<table style='border:1px solid gray' width=100% id='menu'>
-<tr id='selectLogbook'>
-<td><b>Supervisor: <?php echo $supervisor; ?></b> <a href='#' onclick="document.getElementById('supervisor_manual').style.visibility='visible'; ">Edit</a></td>
-<td><b>Date: <?php echo $daily_name; ?></b></td>
-</tr>
-<tr id='selectLogbook'>
-<td><b>Station: <?php echo $station_name; ?></b></td>
-<td><b>Shift: <?php echo $shift; ?></b></td>
-</tr>
-
-
+<li>
+<input type=submit value='Get Records' />
+</li>
+<?php
+if($_SESSION['login_type']=="1"){
+?>
+<li style="float:right;">
+	<input type="button" value="Add New Entry" onclick="PasaCLC()" />
+</li>
+<?php
+}
+?>
+<li style="float:right;">
+	<input type="button" value="Generate DR2C" onclick="window.open('generate_dr2c.php')">
+</li>
+</ul>
+</form>
+<hr class="PgLine"/>
+<table class="TableHolderCLC">
+<tr><td>
+	<table class="TableCLC">
+		<th colspan="2" class="TableHeaderCLC">Main Detail</th>
+	<tr>
+		<td class="col1CLC">Station</td>
+		<td class="col2CLC"><?php echo $station_name; ?></td>
+	</tr>
+	<tr>
+		<td class="col1CLC">Date</td>
+		<td class="col2CLC"><?php echo $daily_name; ?></td>
+	</tr>
+	<tr>
+		<td class="col1CLC">Shift</td>
+		<td class="col2CLC"><?php echo $shift; ?></td>
+	</tr>
+	<tr>
+		<td class="col1CLC">Supervisor</td>
+		<td class="col2CLC"><?php echo $supervisor; ?><a href='#' onclick="document.getElementById('supervisor_manual').style.visibility='visible';" class="editBCLC" style="color:#E89A13;">Edit</a></td>
+	</tr>
+	</table>
+</td>
+<td valign="top">
+	<table class="TableCLC">
+	<tr>
+		<th colspan="2" class="TableHeaderCLC">Other Detail
+		<?php
+		if($daily_id==""){
+		}
+		else {
+		?>
+		<a href='#' onclick="window.open('manually_collected_data_entry.php?manually_id=<?php echo $manually_collected_id; ?>','_blank')" class="editBCLC">Edit</a>
+		<?php
+		}
+		?>
+		</th>
+	</tr>
+	<tr>
+		<td style="width:20px"># of Forms</td>
+		<td style="width:250px"><?php echo $manually_forms_no; ?></td>
+	</tr>
+	<tr>
+		<td>Cash Assistant</td>
+		<td><?php echo $receiving_ca; ?></td>
+	</tr>
+	</table>
+</td></tr>
 </table>
+
 <form action='manually collected.php' method='post'>
 <table name='supervisor_manual' id='supervisor_manual' style='visibility:hidden;' id='menu'>
 <tr id='selectLogbook'><th>Enter Supervisor</th><td><input type=text name='edit_supervisor' size=30 /></td><td><input type='hidden' name='daily_id' value='<?php echo $daily_id; ?>' /><input type='submit' value='Submit' /></td></tr>
 </table>
 </form>
-<br>
-<table style='border:1px solid gray' width=100% id='menu'>
-<tr id='selectLogbook'>
-<td><b># of Forms: <?php echo $manually_forms_no; ?></b></td>
-<td><b>Cash Assistant: <?php echo $receiving_ca; ?></b></td>
-</tr>
 
-</table>
-<?php
-if($daily_id==""){
-}
-else {
-?>
-<a href='#' onclick="window.open('manually_collected_data_entry.php?manually_id=<?php echo $manually_collected_id; ?>','_blank')">Edit</a>
-<?php
-}
-?>
-<br>
-<br>
-<table border=1 style='border-collapse:collapse' width=100% class='logbookTable'>
+
+<table class="BigTableCLC">
 <tr>
 <th rowspan=2>Reference ID</th>
 <th rowspan=2>Ticket Type</th>
@@ -715,11 +762,11 @@ for($k=0;$k<$manually_nm;$k++){
 	$last_use=date("Y-m-d H:i",strtotime($manually_row['last_use']));
 
 	if($manually_row['collected_on']=="entry"){
-		$entry="X";
+		$entry="&#10004";
 	
 	}
 	else if($manually_row['collected_on']=="exit"){
-		$exit="X";
+		$exit="&#10004";
 	
 	}
 	$remaining_value=$manually_row['remaining_value'];
@@ -730,22 +777,19 @@ for($k=0;$k<$manually_nm;$k++){
 	$type=strtoupper($manually_row['type']);
 ?>	
 	<tr>
-		<td><?php echo $reference_id; ?></td>
-
-		<td><?php echo $type; ?> <a href='#' onclick="fillEdit('type','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $serial_no; ?> <a href='#' onclick="fillEdit('serial_no','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $status; ?> <a href='#' onclick="fillEdit('status','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $remaining_value; ?> <a href='#' onclick="fillEdit('remaining_value','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $first_use; ?> <a href='#' onclick="fillEdit('first_use','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $last_use; ?> <a href='#' onclick="fillEdit('last_use','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $eesp_no; ?> <a href='#' onclick="fillEdit('eesp_no','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<th><?php echo $entry; ?> <a href='#' onclick="fillEdit('entry','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></th>
-		<th><?php echo $exit; ?> <a href='#' onclick="fillEdit('exit','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></th>
-		<td><?php echo $cash_assist; ?> <a href='#' onclick="fillEdit('cash_assistant','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td><?php echo $remarks; ?> <a href='#' onclick="fillEdit('remarks','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-		<td>
-		<a href='#' onclick="deleteRow('<?php echo $manually_row['id']; ?>','manually_collected')">X</a></td>
-	</tr>
+		<td class="UnclickableCLC"><?php echo $reference_id; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?> onclick="fillEdit('type','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $type; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('serial_no','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $serial_no; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('status','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $status; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('remaining_value','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $remaining_value; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('first_use','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $first_use; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('last_use','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $last_use; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('eesp_no','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $eesp_no; ?></td>
+		<td class="ClickableCLC XmarkCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('entry','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $entry; ?></td>
+		<td class="ClickableCLC XmarkCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('exit','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $exit; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('cash_assistant','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $cash_assist; ?></td>
+		<td class="ClickableCLC" <?php if($_SESSION['login_type']=="1"){ ?>  onclick="fillEdit('remarks','<?php echo $manually_row['id']; ?>','<?php echo $reference_id; ?>')" <?php } ?>><?php echo $remarks; ?></td>
+		<td class="DeletableCLC"><a href='#' <?php if($_SESSION['login_type']=="1"){ ?>  onclick="deleteRow('<?php echo $manually_row['id']; ?>','manually_collected')" <?php } ?>>X</a></td></tr>
 <?php
 }
 ?>
@@ -761,13 +805,11 @@ for($k=0;$k<$manually_nm;$k++){
 if($daily_id==""){
 }
 else {
+	if($_SESSION['login_type']=="1"){
 ?>
-	<a href='#' onclick="window.open('manually collected entry.php?daily_id=<?php echo $daily_id; ?>')">Add New Entry</a>
-	<br>
-	<br>
-	<br>
-	<a href='#' onclick="window.open('generate_dr2c.php')">Generate DR2C</a>
-
+	<a href='#' style="display:none;" id="AddNewEntryCLC" onclick="window.open('manually collected entry.php?daily_id=<?php echo $daily_id; ?>')">Add New Entry</a>
+	<!--a href='#' onclick="window.open('generate_dr2c.php')">Generate DR2C</a-->
 <?php
+	}
 }
 ?>

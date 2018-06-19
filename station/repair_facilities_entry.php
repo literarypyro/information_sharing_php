@@ -1,9 +1,11 @@
 <?php
+require("db.php");
+?>
+<?php
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 if(isset($_POST['station'])){
 
 	$station=$_POST['station'];
@@ -86,18 +88,22 @@ if(isset($_GET['dd'])){
 	$monitoring_date=$_GET['dd'];
 }
 ?>
-<link href="layout/landbank/control slip.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 
 <form action='repair_facilities_entry.php' method='post'>
-<table style='border:1px solid gray' class='controlTable'>
+<table class="EntryTableCLC" width="40%" align="center"><tr><td>
+<table class="miniHolderCLC">
+<tr>
+	<th class="HeaderCLC" colspan="2">Add - Repair Entry</th>
+</tr>
 <tr>
 <td>Station</td>
 <td>
 <select name='station'>
 <option></option>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from station";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;
@@ -115,11 +121,11 @@ for($i=0;$i<$nm;$i++){
 <tr>
 <td>SS</td>
 <td>
-<input type=text name='ss' />
+<input type=text name='ss' placeholder="SS" />
 </td>
 </tr>
 <tr>
-<th colspan=2>Problem Details</th>
+<th class="HeaderCLC" colspan="2">Problem Details</th>
 </tr>
 <tr>
 <td align=center colspan=2>
@@ -127,13 +133,13 @@ for($i=0;$i<$nm;$i++){
 </td>
 </tr>
 <tr>
-<th>Record No.</th><td id='record_no' name='record_no' ></td>
+<td>Record No.</td><td id='record_no' name='record_no' ></td>
 </tr>
 <tr>
-<th>Incident No.</th><td id='incident_no' name='incident_no'></td>
+<td>Incident No.</td><td id='incident_no' name='incident_no'></td>
 </tr>
 <tr>
-<th>Details</th><td id='problem_details' name='problem_details'></td>
+<td>Details</td><td id='problem_details' name='problem_details'></td>
 </tr>
 
 
@@ -145,7 +151,7 @@ for($i=0;$i<$nm;$i++){
 </td>
 </tr>
 <tr>
-<th colspan=2>Time</th>
+<th colspan=2 class="HeaderCLC">Time</th>
 </tr>
 
 <tr>
@@ -396,7 +402,7 @@ for($i=0;$i<=59;$i++){
 </tr>
 <tr>
 	<td align=center>Repair No.</td>
-	<td><input type=text name='repair_no' /></td>
+	<td><input type=text name='repair_no' placeholder="Repair No." /></td>
 
 
 
@@ -405,15 +411,16 @@ for($i=0;$i<=59;$i++){
 <tr>
 <td align=center>Remarks</td>
 <td>
-<textarea rows=5 cols=50 name='remarks'></textarea>
+<textarea rows=5 name='remarks' placeholder="Remarks"></textarea>
 </td>
 </tr>
+</table>
 <?php
 if($monitoring_date==""){ }
 else {
 ?>
 <tr>
-	<td colspan=2 align=center>
+	<td colspan=2 class="EntrySubmitCLC">
 		<input type=submit value='Submit' />
 		<input type=hidden name='monitoring_date' value='<?php echo $monitoring_date; ?>' />
 	</td>
@@ -421,6 +428,6 @@ else {
 <?php
 }
 ?>
-</table>
+</td></tr></table>
 </form>
 

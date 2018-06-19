@@ -390,8 +390,11 @@ function fillTicketSeller(ajaxHTML){
 
 }
 </script>
-<br>
-<br> 
+<link rel="stylesheet" href="layout/body.css" />
+<link rel="stylesheet" href="layout/styles.css" />
+<div class="PgTitle">
+Ticket Encoding Error Monitoring
+</div>
 <?php
 $db=new mysqli("localhost","root","","station");
 ?>
@@ -407,7 +410,8 @@ $min=date("i");
 $aa=date("a");
 ?>
 
-
+<ul class="SearchBar">
+	<li>
 <select name='month'>
 <?php
 for($i=1;$i<13;$i++){
@@ -427,6 +431,8 @@ for($i=1;$i<13;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='day'>
 <?php
 for($i=1;$i<=31;$i++){
@@ -447,6 +453,8 @@ for($i=1;$i<=31;$i++){
 }
 ?>
 </select>
+	</li>
+	<li>
 <select name='year'>
 <?php
 $dateRecent=date("Y")*1+16;
@@ -467,6 +475,8 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select> 
+	</li>
+	<li>
 <select name='station'>
 <?php
 
@@ -490,10 +500,20 @@ for($i=0;$i<$nm;$i++){
 ?>
 
 </select>
+	</li>
+	<li>
 <input type=submit value='Get Records' />
+	</li>
+	<li style="float:right;">
+	<input type="button" value="Add New Entry" onclick="PasaCLC()" />
+	</li>
+	<li style="float:right;">
+	<input type="button" value="Generate DR2A" onclick="window.open('generate_dr2a.php')">
+	</li>
+
+</ul>
 </form>
-<br>
-<br>
+<hr class="PgLine"/>
 <?php
 if(isset($_SESSION['month'])){
 	
@@ -594,51 +614,51 @@ if(isset($_POST['month'])){
 	
 }	
 ?>
-<table width=100% style='border:1px solid gray' id='menu'>
-<tr id='selectLogbook'>
-<td width=50%>
-Station:
-<?php
-echo $station_name;
-?>
-</td>
-<td width=50%>
-Date: 
-<?php
-echo $daily_name;
-?>
+<table class="TableHolderCLC">
+<tr>
+	<td style="width:50%;">
+	<table class="TableCLC">
+		<th colspan="2" class="TableHeaderCLC">Station & Date</th>
+	<tr>
+		<td class="col1CLC">Station</td>
+		<td class="col2CLC"><?php echo $station_name; ?></td>
+	</tr>
+	<tr>
+		<td class="col1CLC">Date</td>
+		<td class="col2CLC"><?php echo $daily_name; ?></td>
+	</tr>
+	</table>
+	</td>
+	<td style="width:50%;">
+<table class="TableCLC">
+<tr>
+	<th colspan="2"># of TEEMR / Receiving CA
+		<?php
+		if($daily_id==""){
+		}
+		else {
+		?>
+		<a href='#' onclick="window.open('teemr_data_entry.php?daily_id=<?php echo $daily_id; ?>','_blank')" class="editBCLC">Edit</a>
+		<?php
+		}
+		?>
+	</th>
+</tr>
+<tr>
+	<td style="min-width:100px;"># of TEEMR</td>
+	<td style="min-width:200px;"><?php echo $teemr_no; ?></td>
+</tr>
+<tr>
+	<td>Receiving CA</td>
+	<td><?php echo $receiving_ca; ?></td>
+</tr>
+</table>
 </td>
 </tr>
 </table>
-<br>
-<table width=100% style='border:1px solid gray' id='menu'>
-<tr id='selectLogbook'>
-<td width=50%>
-# of TEEMR:
-<?php
-echo $teemr_no;
-?>
-</td>
-<td width=50%>
-Receiving CA: 
-<?php
-echo $receiving_ca;
-?>
-</td>
-</tr>
-</table>
-<?php
-if($daily_id==""){
-}
-else {
-?>
-<a href='#' onclick="window.open('teemr_data_entry.php?daily_id=<?php echo $daily_id; ?>','_blank')">Edit</a>
-<?php
-}
-?>
-<br>
-<br>
-<table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
+
+
+<table class="BigTableCLC">
 <tr>
 <th rowspan=2>Reference ID</th>
 <th rowspan=2>SS In-Charge</th>
@@ -646,13 +666,6 @@ else {
 <th rowspan=2>ID Code</th>
 <th rowspan=2>Machine Number</th>
 <th>Code</th>
-<!--
-<th rowspan=2>Type of Error</th>
--->
-<!--
-<th rowspan=2>Time of Occurrence</th>
-<th>IN</th>
--->
 <th>Report Number</th>
 <th rowspan=2>Remarks</th>
 </tr>
@@ -660,8 +673,34 @@ else {
 <th>Name</th>
 <th>MTC/Judge</th>
 <th>RN</th>
-
 </tr>
+
+
+
+<!--table width=100% border=1px style='border-collapse:collapse;' class='logbookTable'>
+<tr>
+<th rowspan=2>Reference ID</th>
+<th rowspan=2>SS In-Charge</th>
+<th>Ticket Seller Involved</th>
+<th rowspan=2>ID Code</th>
+<th rowspan=2>Machine Number</th>
+<th>Code</th>
+/* <!--
+<th rowspan=2>Type of Error</th>
+-->
+<!--
+<th rowspan=2>Time of Occurrence</th>
+<th>IN</th>
+-->
+<!--th>Report Number</th>
+<th rowspan=2>Remarks</th>
+</tr>
+<tr>
+<th>Name</th>
+<th>MTC/Judge</th>
+<th>RN</th>
+</tr-->
+
 <?php
 	$sql="select * from ticket_error where ticket_daily_id='".$daily_id."'";
 	$rs=$db->query($sql);
@@ -723,15 +762,15 @@ else {
 		$remarks=$row['remarks'];
 	?>
 		<tr>
-			<td align=center><?php echo $reference_id; ?></td>
-			<td align=center><?php echo $ss; ?> <a href='#' onclick="fillEdit('ss_name','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $ticket_seller_name; ?> <a href='#' onclick="fillEdit('ticket_seller','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $ticket_seller_id; ?> <a href='#' onclick="fillEdit('ticket_seller','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $machine_no; ?> <a href='#' onclick="fillEdit('machine_no','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
+			<td class="UnclickableCLC" align=center><?php echo $reference_id; ?></td>
+			<td class="ClickableCLC" onclick="fillEdit('ss_name','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $ss; ?></td>
+			<td class="ClickableCLC" onclick="fillEdit('ticket_seller','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $ticket_seller_name; ?></td>
+			<td class="ClickableCLC" onclick="fillEdit('ticket_seller','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $ticket_seller_id; ?></td>
+			<td class="ClickableCLC" onclick="fillEdit('machine_no','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $machine_no; ?></td>
 			<td align=center><?php echo $error_code; ?> <a href='#' onclick='window.open("teemr_error_entry_1.php?ticket_error_id=<?php echo $row['id']; ?>&ticket_daily_id=<?php echo $daily_id; ?>","_blank")' >Add/Fill Errors</a></td>
-			<td align=center><?php echo $record_no; ?> <a href='#' onclick="fillEdit('record_no','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td align=center><?php echo $remarks; ?>  <a href='#' onclick="fillEdit('remarks','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')">Edit</a></td>
-			<td><a href='#' onclick="deleteRow('<?php echo $row['id']; ?>','ticket_encoding')">X</a></td>
+			<td class="ClickableCLC" onclick="fillEdit('record_no','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $record_no; ?></td>
+			<td class="ClickableCLC" onclick="fillEdit('remarks','<?php echo $row['id']; ?>','<?php echo $reference_id; ?>')" align=center><?php echo $remarks; ?></td>
+			<td class="DeletableCLC"><a href='#' onclick="deleteRow('<?php echo $row['id']; ?>','ticket_encoding')">X</a></td>
 		</tr>
 	<?php
 	}
@@ -753,11 +792,8 @@ if($daily_id==""){
 else {
 
 ?>
-	<a href='#' onclick="window.open('ticket_encoding_entry.php?daily_id=<?php echo $daily_id; ?>','_blank')">Add New Entry</a>
-	<br>
-	<br>
-	<br>
-	<a href='#' onclick="window.open('generate_dr2a.php')">Generate DR2A</a>
+	<a href='#' style="display:none;" id="AddNewEntryCLC" onclick="window.open('ticket_encoding_entry.php?daily_id=<?php echo $daily_id; ?>','_blank')">Add New Entry</a>
+	<!--a href='#' onclick="window.open('generate_dr2a.php')">Generate DR2A</a-->
 <?php
 }
 ?>

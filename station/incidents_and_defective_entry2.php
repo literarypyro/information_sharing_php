@@ -2,8 +2,10 @@
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
-
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 if(isset($_GET['incident'])){
 	$incident_type=$_GET['type'];
 	$incident_id=$_GET['incident'];

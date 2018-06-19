@@ -2,7 +2,10 @@
 ini_set("date.timezone","Asia/Kuala_Lumpur");
 ?>
 <?php
-$db=new mysqli("localhost","root","","station");
+require("db.php");
+?>
+<?php
+$db=retrieveDb();
 if(isset($_POST['incident_month'])){
 	$year=$_POST['incident_year'];
 	$month=$_POST['incident_month'];
@@ -143,21 +146,25 @@ function checkOthers(){
 
 }
 </script>
-<link href="layout/landbank/control slip.css" rel="stylesheet" type="text/css"  id='stylesheet' />
+
+<link rel="stylesheet" href="layout/styles.css" />
+<link rel="stylesheet" href="layout/bodyEntry.css" />
 
 <form action='complaint_report.php' method='post'>
-<table style='border:1px solid gray' class='controlTable'>
+<table class="EntryTableCLC" width="100%">
+<tr><td valign="top">
+<table class='miniHolderCLC' width="35%">
+	<th class="HeaderCLC" colspan="2">Place & Time</th>
 <tr>
-<td>Station Supervisor</td>
-<td><input type=text name='supervisor' size=50 /></td>
+<td width="30%">Station Supervisor</td>
+<td width="70%"><input type=text name='supervisor' placeholder="Station Supervisor"/></td>
 </tr>
 <tr>
 <td>Station Name</td>
 <td>
 <select name='station'>
 <?php
-$db=new mysqli("localhost","root","","station");
-$sql="select * from station";
+$db=retrieveDb();$sql="select * from station";
 $rs=$db->query($sql);
 $nm=$rs->num_rows;
 for($i=0;$i<$nm;$i++){
@@ -171,7 +178,8 @@ for($i=0;$i<$nm;$i++){
 </td>
 </tr>
 <tr>
-<td>Date/Time:</td><td>
+<td>Date</td>
+<td>
 <select name='general_month'>
 <?php
 $mm=date("m");
@@ -240,6 +248,11 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select>
+</td>
+</tr>
+<tr>
+<td>Time</td>
+<td>
 <select name='general_hour'>
 <?php
 for($i=1;$i<=12;$i++){
@@ -290,10 +303,13 @@ for($i=0;$i<=59;$i++){
 </td>
 </tr>
 </table>
-<br>
-<table style='border:1px solid gray' width='570' class='controlTable'>
+</td><td>
+<table class='miniHolderCLC' width="35%">
 <tr>
-<td>Time of Complaint</td>
+	<th class="HeaderCLC" colspan="2">Complaint Detail</th>
+</tr>
+<tr>
+<td>Date of Complaint</td>
 <td>
 <select name='incident_month'>
 <?php
@@ -363,6 +379,11 @@ for($i=1999;$i<=$dateRecent;$i++){
 }
 ?>
 </select>
+</td>
+</tr>
+<tr>
+<td>Time of Complaint</td>
+<td>
 <select name='incident_hour'>
 <?php
 for($i=1;$i<=12;$i++){
@@ -421,8 +442,7 @@ for($i=0;$i<=59;$i++){
 <select name='nature' id='nature' onchange='checkOthers()'>
 
 <?php
-$db=new mysqli("localhost","root","","station");
-
+$db=retrieveDb();
 $sql="select * from nature_complaint";
 $rs=$db->query($sql);
 
@@ -444,11 +464,15 @@ for($i=0;$i<$nm;$i++){
 </tr>
 <tr>
 <td>Complainant Identity</td>
-<td><input type=text name='identity' size=50 /></td>
+<td><input type=text name='identity' placeholder="Complainant Identity"/></td>
 </tr>
 <tr>
-<td>Age <input type=text name='age' size=5 /></td>
-<td>Sex 
+<td>Age</td>
+<td><input type=text name='age' style="width:80px" placeholder="Age" /></td>
+</tr>
+<tr>
+<td>Sex </td>
+<td>
 <select name='sex'>
 <option value='M'>Male</option>
 <option value='F'>Female</option>
@@ -457,50 +481,53 @@ for($i=0;$i<$nm;$i++){
 </tr>
 <tr>
 <td>Occupation</td>
-<td><input type=text name='occupation' size=50 /></td>
+<td><input type=text name='occupation' placeholder="Occupation" /></td>
 </tr>
 <tr>
 <td>Contact Number</td>
-<td><input type=text name='contact_no' size=50 /></td>
+<td><input type=text name='contact_no' placeholder="Contact Number"/></td>
 </tr>
 
 <tr>
 <td>Person/s Involved</td>
-<td><textarea name='persons' rows=5 cols=50  ></textarea></td>
+<td><textarea name='persons' rows=5 placeholder="Person/s Involved" ></textarea></td>
 </tr>
 <tr>
 <td>Concerned Office</td>
-<td><input type=text name='concerned_office' size=50  /></td>
+<td><input type=text name='concerned_office' placeholder="Concerned Office" /></td>
 </tr>
 
 <tr>
 <td>Circumstances</td>
-<td><textarea name='circumstances' rows=5 cols=50  ></textarea></td>
+<td><textarea name='circumstances' rows=5 placeholder="Circumstances"></textarea></td>
 </tr>
 <tr>
 <td>Observation of CCTV Footage</td>
-<td><textarea name='cctv' rows=5 cols=50  ></textarea></td>
+<td><textarea name='cctv' rows=5 placeholder="Observation of CCTV Footage" ></textarea></td>
 </tr>
 
 </table>
-<br>
-<table style='border:1px solid gray' width=570 class='controlTable'>
-<tr><th colspan=2>Investigation Report</th></tr>
+</td><td valign="top" width="30%">
+<table class="miniHolderCLC" width="25%">
 <tr>
-<td>Findings/Result of Investigation</td>
-<td><textarea name='findings' rows=5 cols=50  ></textarea></td>
+	<th class="HeaderCLC" colspan="2">Investigation Report</th>
 </tr>
 <tr>
-<td>Immediate Action/Corrective Measures</td>
-<td><textarea name='action' rows=5 cols=50 ></textarea></td>
+<td width="40%">Findings / Result of Investigation</td>
+<td width="60%"><textarea name='findings' rows=5 placeholder="Findings / Result of Investigation" ></textarea></td>
+</tr>
+<tr>
+<td>Immediate Action / Corrective Measures</td>
+<td><textarea name='action' rows=5 placeholder="Immediate Action / Corrective Measures"></textarea></td>
 </tr>
 <tr>
 <td>Recommendation/s</td>
-<td><textarea name='recommendations' rows=5 cols=50  ></textarea></td>
+<td><textarea name='recommendations' rows=5 placeholder="Recommendation/s" ></textarea></td>
 </tr>
 </table>
-<table width=570 >
-<tr><td align=center><input type=submit value='Submit' /></td>
+<tr>
+<td colspan="3" class="EntrySubmitCLC"><input type=submit value='Submit' /></td>
 </tr>
-</table>
+
+</td></tr></table>
 </form>
