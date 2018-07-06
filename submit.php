@@ -26,7 +26,9 @@ session_start();
 						$_SESSION['department']=$row['deptCode'];
 						
 						$_SESSION['Ulevel']=$row['levelid']; 
-
+						$_SESSION['user_fullname']=$row['lastName'].", ".$row['firstName'];
+						
+						
 						
 						$log_stamp=date("Y-m-d H:i");
 						
